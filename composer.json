@@ -1,7 +1,7 @@
 {
     "name": "watchfulli/xcloner-core",
     "description": "XCloner Core Library for Backup and Restore",
-    "type": "library",
+    "type": "package",
     "require": {
         "splitbrain/php-archive": "dev-master",
         "league/flysystem": "2.x-dev",
