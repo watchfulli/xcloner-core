@@ -15,5 +15,8 @@
             "email": "info@thinkovi.com"
         }
     ],
-    "minimum-stability": "dev"
+    "minimum-stability": "stable",
+    "autoload": {
+        "psr-4": {"watchfulli\\XClonerCore\\": "src/"}
+    },
 }

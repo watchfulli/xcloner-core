@@ -1,4 +1,6 @@
-namespace watchfulli/XClonerCore;
+<?php 
+
+namespace watchfulli\XClonerCore;
 
 class Index
 {
