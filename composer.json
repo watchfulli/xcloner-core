@@ -3,10 +3,10 @@
     "description": "XCloner Core Library for Backup and Restore",
     "type": "package",
     "require": {
-        "splitbrain/php-archive": "dev-master",
-        "league/flysystem": "2.x-dev",
-        "monolog/monolog": "^2.0@dev",
-        "league/flysystem-sftp": "dev-master"
+        "splitbrain/php-archive": "^1.0",
+        "league/flysystem": "^1.0",
+        "monolog/monolog": "^1.22",
+        "league/flysystem-sftp": "^1.0"
     },
     "license": "GNU/GPL",
     "authors": [
