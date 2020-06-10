@@ -27,7 +27,11 @@ Trigger standalone backup with profile stored in standalone_backup_trigger_confi
 define('WP_DEBUG', true);
 define('WP_DEBUG_DISPLAY', true);
 
-require_once(__DIR__.'/vendor/autoload.php');
+require_once('../vendor/autoload.php');
+
+$profile = [
+    'id' => 0
+];
 
 //loading the default xcloner settings in format [{'option_name':'value', {'option_value': 'value'}}]
 $json_config = json_decode(file_get_contents(__DIR__ . '/standalone_backup_trigger_config.json'));
@@ -40,7 +44,6 @@ if (!$json_config) {
 $xcloner_backup = new watchfulli\XClonerCore\Xcloner_Standalone($json_config);
 
 $xcloner_backup->start($profile['id']);
-
 
 ```
 
