@@ -48,8 +48,11 @@ use League\Flysystem\AwsS3v3\AwsS3Adapter;
 use Mhetreramesh\Flysystem\BackblazeAdapter;
 use BackblazeB2\Client as B2Client;
 
-use Sabre\DAV\Client as SabreClient;
-use League\Flysystem\WebDAV\WebDAVAdapter;
+#use Sabre\DAV\Client as SabreClient;
+#use League\Flysystem\WebDAV\WebDAVAdapter;
+
+use Microsoft\Graph\Graph;
+use NicolasBeauvais\FlysystemOneDrive\OneDriveAdapter;
 
 /**
  * Class Xcloner_Remote_Storage
@@ -114,6 +117,16 @@ class Xcloner_Remote_Storage
             "aws_cleanup_exclude_days" => "string",
             "aws_cleanup_retention_limit_archives" => "int",
             "aws_cleanup_capacity_limit" => "int"
+        ),
+        "onedrive" => array(
+            "text" => "OneDrive",
+            "onedrive_enable" => "int",
+            "onedrive_client_id" => "string",
+            "onedrive_client_secret" => "raw",
+            "onedrive_cleanup_retention_limit_days" => "float",
+            "onedrive_cleanup_exclude_days" => "string",
+            "onedrive_cleanup_retention_limit_archives" => "int",
+            "onedrive_cleanup_capacity_limit" => "int"
         ),
         "dropbox" => array(
             "text" => "Dropbox",
@@ -674,8 +687,8 @@ class Xcloner_Remote_Storage
             //'proxy' => 'locahost:8888',
         );
 
-        $client = new SabreClient($settings);
-        $adapter = new WebDAVAdapter($client, $this->xcloner_settings->get_xcloner_option("xcloner_webdav_target_folder"));
+        $client = new \Sabre\DAV\Client($settings);
+        $adapter = new \League\Flysystem\WebDAV\WebDAVAdapter($client, $this->xcloner_settings->get_xcloner_option("xcloner_webdav_target_folder"));
         $filesystem = new Filesystem($adapter, new Config([
             'disable_asserts' => true,
         ]));
@@ -683,16 +696,48 @@ class Xcloner_Remote_Storage
         return array($adapter, $filesystem);
     }
 
+    /**
+     * OneDrive connector
+     * 
+     * https://docs.microsoft.com/en-us/onedrive/developer/rest-api/getting-started/graph-oauth?view=odsp-graph-online#token-flow
+     *
+     * @return void
+     */
+    public function get_onedrive_filesystem()
+    {
+        
+        /*
+        GET https://login.microsoftonline.com/common/oauth2/v2.0/authorize?
+        client_id=25701c80-590f-4fbe-95fd-a8c9ecdc831e&
+        scope=offline_access files.readwrite.all  files.read files.read.all files.readwrite&
+        response_type=code&
+        redirect_uri=http://localhost:8888/wordpress/wp-admin/admin.php
+        */
+        
+        //echo $this->xcloner_settings->get_xcloner_option("xcloner_onedrive_client_id");
+        //echo $this->xcloner_settings->get_xcloner_option("xcloner_onedrive_client_secret");
+
+        
+        $accessToken = "EwBwA8l6BAAUO9chh8cJscQLmU+LSWpbnr0vmwwAATz+/jXd1cqStjtaHRY95vVgLQcWGNXj7v9paRq7M67lDdjL5PuthLhNfe5Utj6Q1rsSDSUW0jkjSslQN4BzpTyhodAqbg9ZqM/3iBfFk+oBn9WBg4nvKZBYtp7/HYeEgh8vovwwAhsx6QXTWVt5oKmup9rIZWwOpYzfhwGBwHJOwxDtJ38fyfc8bftMTyTog3Dfy/NNeIev4zbRoCHG/SIQQqGskib0zM3wdDTVWQ9yaSdvkBuAjE2ItfY+077nrt8AlbOmI5snZuExuWrL1qwy/TP1zZ5Yr85FPQVfeqGh1qcCmMHkGpt2py1YECFbS6mQOv9fsvlL6ftvoXbJISQDZgAACDKJzSGvaoXgQAJg500TM5Ysjl/RVa0eZWZCWsFlOx/No8MQZ00EAeA9svxKLG+N6HTXEyYyRU36sx/24zWGJhvR76z5D+t+TEnQbdaQGKfA7nbt6mYF/1/o3Q9EExZyTjz9bk97uEK7iHPlBNo9na6m+6xTIT5PPx+RVycToMisBH/w1JGRGdG5IVa+37vXcdvLwtlsPTORlReM/PbS1Na/Cb4KWK5JEwoHM3Wbx83ezfGXL+wNcX4A6TqY5whHOib7NXqXVEVeUKeTQs5m8AuHtMmYNgXUgz915hox3SWHig47fpBeO2WK2VUTkUQN4YsjItxRVEMgsIRlLXvwms47ECa0mfvjJ7j/lv1I4V+Bv0DYyPtMr9o+SnyLGAB62Ztya1wf+31fGkzMrbloEwRnyMXYbjXecO+/x0wIY02F107ruzsovlWw0p1X4uesGOFa+07E9onsk+jeeDI/Z07b39MChfUMlMLa8rjjA9+ntlgQq6Xn8sDHKF505DnXBDDusPUdDvVWbHjMYdYU4UcsYIaf3+7K9D+BpNSiLTT4bFCSBN5GHLz7zQLJHZtYTrj6mqybAGQW+m5Kyw0VeK6V86dlMn8eZVLQhwhI5CHINFVRbzMLGNHLmmQSJHJuiyAvimVqUOJtNdygKelogUq/a60Y90Ccn59GW405fpkBaaZ2pPT2J38aGAszuc7kZ35kpuEdXpB168dLqv6RI37fizrrokbLjE963stlTFXCFa35ijVHOzxbg1fEnqN0dZhTyESiA8/+ZQyHAg==";
+        //exit;
+
+        $graph = new Graph();
+        $graph->setAccessToken($accessToken);
+
+        $adapter = new OneDriveAdapter($graph, 'special/approot');
+        $filesystem = new Filesystem($adapter);
+
+        //print_r($filesystem->listContents());
+
+        return array($adapter, $filesystem);
+    }
+
 
     public function gdrive_construct()
     {
-
-        //if((function_exists("is_plugin_active") && !is_plugin_active("xcloner-google-drive/xcloner-google-drive.php")) || !file_exists(__DIR__ . "/../../xcloner-google-drive/vendor/autoload.php"))
         if (!class_exists('Google_Client')) {
             return false;
         }
-
-        //require_once(__DIR__ . "/../../xcloner-google-drive/vendor/autoload.php");
 
         $client = new \Google_Client();
         $client->setApplicationName($this->gdrive_app_name);
@@ -809,8 +854,8 @@ class Xcloner_Remote_Storage
 
         $this->logger->info(sprintf("Using target folder with ID %s on the remote storage", $folderID));
 
-        if (class_exists('XCloner_Google_Drive_Adapter')) {
-            $adapter = new XCloner_Google_Drive_Adapter($service, $folderID);
+        if (class_exists('\XCloner_Google_Drive_Adapter')) {
+            $adapter = new \XCloner_Google_Drive_Adapter($service, $folderID);
         } else {
             $adapter = new \Hypweb\Flysystem\GoogleDrive\GoogleDriveAdapter($service, $folderID);
         }
