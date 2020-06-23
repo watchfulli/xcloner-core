@@ -30,6 +30,7 @@ namespace watchfulli\XClonerCore;
 
 use League\Flysystem\Config;
 use League\Flysystem\Filesystem;
+use League\Flysystem\Adapter\Local;
 
 use League\Flysystem\Adapter\Ftp as Adapter;
 
@@ -59,6 +60,16 @@ class Xcloner_Remote_Storage
 
     private $storage_fields = array(
         "option_prefix" => "xcloner_",
+        "local" => array(
+            "text" => "Local",
+            "local_enable" => "int",
+            "store_path" => "string",
+            "start_path" => "string",
+            "cleanup_retention_limit_days" => "float",
+            "cleanup_exclude_days" => "string",
+            "cleanup_retention_limit_archives" => "int",
+            "cleanup_capacity_limit" => "int"
+        ),
         "ftp" => array(
             "text" => "FTP",
             "ftp_enable" => "int",
@@ -287,7 +298,7 @@ class Xcloner_Remote_Storage
         }
 
         $storage = $this->xcloner_sanitization->sanitize_input_as_string($action);
-        $this->logger->debug(sprintf("Saving the remote storage %s options", strtoupper($action)));
+        $this->logger->debug(sprintf("Saving the storage %s options", strtoupper($action)));
 
         if (is_array($this->storage_fields[$storage])) {
             foreach ($this->storage_fields[$storage] as $field => $validation) {
@@ -317,6 +328,8 @@ class Xcloner_Remote_Storage
                 $this->storage_fields[$action]['text']
             );
         }
+
+        $this->get_xcloner_container()->check_dependencies();
     }
 
     public function check($action = "ftp")
@@ -522,6 +535,21 @@ class Xcloner_Remote_Storage
     public function clean_remote_storage($storage, $remote_storage_filesystem)
     {
         return $this->xcloner_file_system->backup_storage_cleanup($storage, $remote_storage_filesystem);
+    }
+
+    public function get_local_filesystem()
+    {
+        $this->get_xcloner_container()->check_dependencies();
+
+        $this->logger->info(sprintf("Creating the Local remote storage connection"), array(""));
+
+        $adapter = new Local($this->xcloner_settings->get_xcloner_option('xcloner_store_path'), LOCK_EX, '0001');
+
+        $filesystem = new Filesystem($adapter, new Config([
+            'disable_asserts' => true,
+        ]));
+
+        return array($adapter, $filesystem);
     }
 
     public function get_azure_filesystem()
