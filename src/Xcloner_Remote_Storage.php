@@ -714,17 +714,12 @@ class Xcloner_Remote_Storage
         redirect_uri=http://localhost:8888/wordpress/wp-admin/admin.php
         */
         
-        //echo $this->xcloner_settings->get_xcloner_option("xcloner_onedrive_client_id");
-        //echo $this->xcloner_settings->get_xcloner_option("xcloner_onedrive_client_secret");
-
-        
-        $accessToken = "EwBwA8l6BAAUO9chh8cJscQLmU+LSWpbnr0vmwwAATz+/jXd1cqStjtaHRY95vVgLQcWGNXj7v9paRq7M67lDdjL5PuthLhNfe5Utj6Q1rsSDSUW0jkjSslQN4BzpTyhodAqbg9ZqM/3iBfFk+oBn9WBg4nvKZBYtp7/HYeEgh8vovwwAhsx6QXTWVt5oKmup9rIZWwOpYzfhwGBwHJOwxDtJ38fyfc8bftMTyTog3Dfy/NNeIev4zbRoCHG/SIQQqGskib0zM3wdDTVWQ9yaSdvkBuAjE2ItfY+077nrt8AlbOmI5snZuExuWrL1qwy/TP1zZ5Yr85FPQVfeqGh1qcCmMHkGpt2py1YECFbS6mQOv9fsvlL6ftvoXbJISQDZgAACDKJzSGvaoXgQAJg500TM5Ysjl/RVa0eZWZCWsFlOx/No8MQZ00EAeA9svxKLG+N6HTXEyYyRU36sx/24zWGJhvR76z5D+t+TEnQbdaQGKfA7nbt6mYF/1/o3Q9EExZyTjz9bk97uEK7iHPlBNo9na6m+6xTIT5PPx+RVycToMisBH/w1JGRGdG5IVa+37vXcdvLwtlsPTORlReM/PbS1Na/Cb4KWK5JEwoHM3Wbx83ezfGXL+wNcX4A6TqY5whHOib7NXqXVEVeUKeTQs5m8AuHtMmYNgXUgz915hox3SWHig47fpBeO2WK2VUTkUQN4YsjItxRVEMgsIRlLXvwms47ECa0mfvjJ7j/lv1I4V+Bv0DYyPtMr9o+SnyLGAB62Ztya1wf+31fGkzMrbloEwRnyMXYbjXecO+/x0wIY02F107ruzsovlWw0p1X4uesGOFa+07E9onsk+jeeDI/Z07b39MChfUMlMLa8rjjA9+ntlgQq6Xn8sDHKF505DnXBDDusPUdDvVWbHjMYdYU4UcsYIaf3+7K9D+BpNSiLTT4bFCSBN5GHLz7zQLJHZtYTrj6mqybAGQW+m5Kyw0VeK6V86dlMn8eZVLQhwhI5CHINFVRbzMLGNHLmmQSJHJuiyAvimVqUOJtNdygKelogUq/a60Y90Ccn59GW405fpkBaaZ2pPT2J38aGAszuc7kZ35kpuEdXpB168dLqv6RI37fizrrokbLjE963stlTFXCFa35ijVHOzxbg1fEnqN0dZhTyESiA8/+ZQyHAg==";
-        //exit;
+        $accessToken = get_option('xcloner_onedrive_access_token');
 
         $graph = new Graph();
         $graph->setAccessToken($accessToken);
 
-        $adapter = new OneDriveAdapter($graph, 'special/approot');
+        $adapter = new OneDriveAdapter($graph, 'root');
         $filesystem = new Filesystem($adapter);
 
         //print_r($filesystem->listContents());
