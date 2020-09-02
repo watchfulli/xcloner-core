@@ -541,7 +541,7 @@ class Xcloner_Api
         }
 
         try {
-            $files = $this->xcloner_file_system->list_directory($folder);
+            $files = $this->xcloner_file_system->directory($folder);
         } catch (Exception $e) {
             print $e->getMessage();
             $this->logger->error($e->getMessage());
