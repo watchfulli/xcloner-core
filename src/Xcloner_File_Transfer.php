@@ -27,6 +27,7 @@ namespace watchfulli\XClonerCore;
  * @link https://github.com/ovidiul/XCloner-Wordpress
  *
  * @modified 7/25/18 1:46 PM
+ *
  */
 class Xcloner_File_Transfer extends Xcloner_File_System
 {
@@ -68,7 +69,7 @@ class Xcloner_File_Transfer extends Xcloner_File_System
 
     /**
      * @param $file
-     * @param int    $start
+     * @param int $start
      * @param string $hash
      *
      * @return bool|int
@@ -99,21 +100,19 @@ class Xcloner_File_Transfer extends Xcloner_File_System
         $send_array['start'] = $start;
         $send_array['xcloner_action'] = "write_file";
         $send_array['hash'] = $hash;
-        // $send_array['blob']     = $binary_data;
+        #$send_array['blob'] 	= $binary_data;
         $send_array['blob'] = $this->curl_file_create($tmp_file_path, 'application/x-binary', $tmp_filename);
 
         //$data = http_build_query($send_array);
 
-        $this->get_logger()->info(
-            sprintf(
-                "Sending curl request to %s with %s data of file %s starting position %s using temporary file %s",
-                $this->target_url,
-                $this->transfer_limit,
-                $file,
-                $start,
-                $tmp_filename
-            )
-        );
+        $this->get_logger()->info(sprintf(
+            "Sending curl request to %s with %s data of file %s starting position %s using temporary file %s",
+            $this->target_url,
+            $this->transfer_limit,
+            $file,
+            $start,
+            $tmp_filename
+        ));
 
 
         $ch = curl_init();
@@ -145,14 +144,12 @@ class Xcloner_File_Transfer extends Xcloner_File_System
         }
 
         if (ftell($fp) >= $this->get_storage_filesystem()->getSize($file)) {
-            $this->get_logger()->info(
-                sprintf(
-                    "Upload done for file %s to target url %s, transferred a total of %s bytes",
-                    $file,
-                    $this->target_url,
-                    ftell($fp)
-                )
-            );
+            $this->get_logger()->info(sprintf(
+                "Upload done for file %s to target url %s, transferred a total of %s bytes",
+                $file,
+                $this->target_url,
+                ftell($fp)
+            ));
             $this->remove_tmp_filesystem();
 
             return false;
