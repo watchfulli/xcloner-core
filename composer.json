@@ -1,7 +1,7 @@
 {
     "name": "watchfulli/xcloner-core",
     "description": "XCloner Core Library for Backup and Restore",
-    "verson": "1.0.2",
+    "verson": "2.0.0",
     "type": "package",
     "require": {
         "php": ">=7.1.0",
