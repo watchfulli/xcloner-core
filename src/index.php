@@ -1,6 +1,6 @@
-<?php 
+<?php
 
-namespace watchfulli\XClonerCore;
+namespace Watchfulli\XClonerCore;
 
 class Index
 {

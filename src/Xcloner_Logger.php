@@ -1,5 +1,5 @@
 <?php
-namespace watchfulli\XClonerCore;
+namespace Watchfulli\XClonerCore;
 
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;

@@ -1,5 +1,5 @@
 <?php
-namespace watchfulli\XClonerCore;
+namespace Watchfulli\XClonerCore;
 
 /**
  * Created by PhpStorm.

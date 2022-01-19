@@ -1,5 +1,5 @@
 <?php
-namespace watchfulli\XClonerCore;
+namespace Watchfulli\XClonerCore;
 
 define('XCLONER_STANDALONE_MODE', true);
 
@@ -22,19 +22,19 @@ class Xcloner_Standalone extends Xcloner
         }
 
         $this->load_dependencies();
-        
+
         $this->define_plugin_settings($json_config);
-        
+
         if(!isset($_POST['hash']) || !$_POST['hash']){
             $_POST['hash'] = "";
         }
         $this->xcloner_settings = new Xcloner_Settings($this, $_POST['hash'], $json_config);
-        
-        
+
+
          if( !$this->xcloner_settings->get_hash(true) ){
             $this->xcloner_settings->generate_new_hash();
          }
-        
+
 
         $this->define_plugin_settings();
 
@@ -52,7 +52,7 @@ class Xcloner_Standalone extends Xcloner
         $this->xcloner_file_transfer 	= new Xcloner_File_Transfer($this);
         $this->xcloner_encryption    	= new Xcloner_Encryption($this);
         $this->xcloner_sanitization 	= new Xcloner_Sanitization();
-        
+
         //$this->start();
     }
 

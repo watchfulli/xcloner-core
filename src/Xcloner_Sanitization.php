@@ -1,6 +1,6 @@
 <?php
 
-namespace watchfulli\XClonerCore;
+namespace Watchfulli\XClonerCore;
 
 use League\Flysystem\Util;
 
@@ -82,7 +82,7 @@ class Xcloner_Sanitization
     {
         return filter_var($option, FILTER_SANITIZE_URL);
     }
-    
+
     /**
      * Sanitize input as RELATIVE PATH
      *

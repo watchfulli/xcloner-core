@@ -1,5 +1,5 @@
 <?php
-namespace watchfulli\XClonerCore;
+namespace Watchfulli\XClonerCore;
 
 /**
  * XCloner - Backup and Restore backup plugin for Wordpress
@@ -311,7 +311,7 @@ class Xcloner_Remote_Storage
                 $return[$storage] = $data['text'];
             }
         }
-        
+
         return $return;
     }
 
@@ -776,7 +776,7 @@ class Xcloner_Remote_Storage
             //'headers' => [ 'Content-Type' => 'application/json' ],
             //'debug' => true
         ]);
-        
+
         $response = $client->request(
             'POST',
             $this::GDRIVE_REDIRECT_URL_WATCHFUL,
@@ -788,7 +788,7 @@ class Xcloner_Remote_Storage
         );
 
         $token = json_decode($response->getBody()->getContents(), true);
-        
+
         if ($response->getStatusCode() == 200 && $token['access_token']) {
             update_option("xcloner_gdrive_access_token", json_encode($token));
         } else {
@@ -806,7 +806,7 @@ class Xcloner_Remote_Storage
         $client = $this->gdrive_construct();
 
         $client->setApplicationName($this::GDRIVE_APP_NAME);
-        
+
         $client_id = $this->xcloner_settings->get_xcloner_option("xcloner_gdrive_client_id");
         if(!$client_id) {
             $client_id = $this::GDRIVE_AUTH_WATCHFUL;
@@ -829,7 +829,7 @@ class Xcloner_Remote_Storage
         }
 
         $token = $client->fetchAccessTokenWithAuthCode($code);
-   
+
         $client->setAccessToken($token);
 
         update_option("xcloner_gdrive_access_token", $token);
@@ -892,7 +892,7 @@ class Xcloner_Remote_Storage
         //refresh token if expired
         if ($client->isAccessTokenExpired()) {
             $auth_token = $this->gdrive_refresh_token($client);
-            
+
             if ($auth_token) {
                 $client->setAccessToken($auth_token);
             }

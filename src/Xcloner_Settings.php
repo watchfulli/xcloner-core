@@ -1,5 +1,5 @@
 <?php
-namespace watchfulli\XClonerCore;
+namespace Watchfulli\XClonerCore;
 
 class Xcloner_Settings
 {
@@ -34,10 +34,10 @@ class Xcloner_Settings
         }
     }
 
-    /** 
+    /**
      * Restore default XCloner settings by deleting all existing values
      */
-    public function restore_defaults() {    
+    public function restore_defaults() {
         global $wpdb;
 
         return $wpdb->query( "DELETE FROM {$wpdb->prefix}options WHERE option_name LIKE 'xcloner_%'" );
@@ -302,7 +302,7 @@ class Xcloner_Settings
 
         return $data;
     }
-    
+
     /**
      * Get Database Username
      *
@@ -635,7 +635,7 @@ class Xcloner_Settings
                 //'disabled'
             )
         );
-        
+
         register_setting('xcloner_mysql_settings_group', 'xcloner_mysql_password', array(
             $this->xcloner_sanitization,
             "sanitize_input_as_raw"
@@ -671,7 +671,7 @@ class Xcloner_Settings
                 //'disabled'
             )
         );
-        
+
         register_setting('xcloner_mysql_settings_group', 'xcloner_mysql_prefix', array(
             $this->xcloner_sanitization,
             "sanitize_input_as_raw"
@@ -993,7 +993,7 @@ class Xcloner_Settings
 
 		<?php
     }
-    
+
     /**
      * Password field UI
      *
