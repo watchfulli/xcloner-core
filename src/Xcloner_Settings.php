@@ -1,5 +1,5 @@
 <?php
-namespace Watchfulli\XClonerCore;
+namespace Watchful\XClonerCore;
 
 class Xcloner_Settings
 {
@@ -141,9 +141,9 @@ class Xcloner_Settings
 
     /**
      * Create a random string
-     * @author	XEWeb <>
      * @param $length the length of the string to create
      * @return string
+     *@author	XEWeb <>
      */
     /*public function randomString($length = 6) {
         $str = "";

@@ -1,6 +1,6 @@
 <?php
 
-namespace Watchfulli\XClonerCore;
+namespace Watchful\XClonerCore;
 
 /**
  * XCloner - Backup and Restore backup plugin for Wordpress
@@ -397,9 +397,9 @@ class Xcloner_File_System
             }
 
             if ($file_info['type'] == 'file' and isset($file_info['extension']) and in_array(
-                $file_info['extension'],
-                $this->backup_archive_extensions
-            )) {
+                    $file_info['extension'],
+                    $this->backup_archive_extensions
+                )) {
                 $backup_files[$file_info['path']] = $file_info;
             }
         }
@@ -735,7 +735,7 @@ class Xcloner_File_System
             if ($exclude_days_string = $this->xcloner_settings->get_xcloner_option($xcloner_cleanup_exclude_days)) {
                 $exclude_days = explode(",", $exclude_days_string);
 
-                $backup_day_of_month =  date('j', $file['timestamp']);
+                $backup_day_of_month = date('j', $file['timestamp']);
                 if (in_array($backup_day_of_month, $exclude_days)) {
                     $this->logger->info(
                         sprintf(
@@ -981,10 +981,10 @@ class Xcloner_File_System
 
             foreach ($regex_patterns as $excluded_file_pattern) {
                 if (substr(
-                    $excluded_file_pattern,
-                    strlen($excluded_file_pattern) - 1,
-                    strlen($excluded_file_pattern)
-                ) == "\r") {
+                        $excluded_file_pattern,
+                        strlen($excluded_file_pattern) - 1,
+                        strlen($excluded_file_pattern)
+                    ) == "\r") {
                     $excluded_file_pattern = substr($excluded_file_pattern, 0, strlen($excluded_file_pattern) - 1);
                 }
 

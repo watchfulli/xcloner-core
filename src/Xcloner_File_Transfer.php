@@ -1,6 +1,6 @@
 <?php
 
-namespace Watchfulli\XClonerCore;
+namespace Watchful\XClonerCore;
 
 /**
  * XCloner - Backup and Restore backup plugin for WordPress

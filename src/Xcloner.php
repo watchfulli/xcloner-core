@@ -1,7 +1,8 @@
 <?php
 
-namespace Watchfulli\XClonerCore;
+namespace Watchful\XClonerCore;
 
-class Xcloner{
+class Xcloner
+{
 
 }

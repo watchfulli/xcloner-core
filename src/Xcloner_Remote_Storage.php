@@ -1,5 +1,6 @@
 <?php
-namespace Watchfulli\XClonerCore;
+
+namespace Watchful\XClonerCore;
 
 /**
  * XCloner - Backup and Restore backup plugin for Wordpress
@@ -646,7 +647,7 @@ class Xcloner_Remote_Storage
         );
 
         if ($this->xcloner_settings->get_xcloner_option('xcloner_aws_endpoint')
-        /*&& !$this->xcloner_settings->get_xcloner_option("xcloner_aws_region")*/) {
+            /*&& !$this->xcloner_settings->get_xcloner_option("xcloner_aws_region")*/) {
             $credentials['endpoint'] = $this->xcloner_settings->get_xcloner_option('xcloner_aws_endpoint');
         }
         $client = new S3Client($credentials);
@@ -720,7 +721,7 @@ class Xcloner_Remote_Storage
         $graph->setAccessToken($accessToken);
 
         $adapter = new OneDriveAdapter($graph, 'root', 1);
-        $adapter->setPathPrefix('/drive/root:/'.get_option('xcloner_onedrive_path')."/");
+        $adapter->setPathPrefix('/drive/root:/' . get_option('xcloner_onedrive_path') . "/");
         $filesystem = new Filesystem($adapter);
 
         //print_r($filesystem->listContents());
@@ -743,7 +744,7 @@ class Xcloner_Remote_Storage
         //$redirect_uri = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF']."?page=xcloner_remote_storage_page&action=set_gdrive_code";
 
         $gdrive_redirect_url = $this::GDRIVE_REDIRECT_URL;
-        if(!$this->xcloner_settings->get_xcloner_option("xcloner_gdrive_client_id") ) {
+        if (!$this->xcloner_settings->get_xcloner_option("xcloner_gdrive_client_id")) {
             $gdrive_redirect_url = $this::GDRIVE_REDIRECT_URL_WATCHFUL;
         }
 
@@ -772,7 +773,7 @@ class Xcloner_Remote_Storage
             // Base URI is used with relative requests
             //'base_uri' => $this->gdrive_redirect_url,
             // You can set any number of default request options.
-            'timeout'  => 2.0,
+            'timeout' => 2.0,
             //'headers' => [ 'Content-Type' => 'application/json' ],
             //'debug' => true
         ]);
@@ -781,9 +782,9 @@ class Xcloner_Remote_Storage
             'POST',
             $this::GDRIVE_REDIRECT_URL_WATCHFUL,
             [
-            'form_params' => [
-                $param => $code
-               ]
+                'form_params' => [
+                    $param => $code
+                ]
             ]
         );
 
@@ -793,7 +794,7 @@ class Xcloner_Remote_Storage
             update_option("xcloner_gdrive_access_token", json_encode($token));
         } else {
             $this->xcloner->trigger_message(
-                "%s connection error: Failed to get the AUTH code (".$token['error'].")",
+                "%s connection error: Failed to get the AUTH code (" . $token['error'] . ")",
                 "error"
             );
         }
@@ -808,7 +809,7 @@ class Xcloner_Remote_Storage
         $client->setApplicationName($this::GDRIVE_APP_NAME);
 
         $client_id = $this->xcloner_settings->get_xcloner_option("xcloner_gdrive_client_id");
-        if(!$client_id) {
+        if (!$client_id) {
             $client_id = $this::GDRIVE_AUTH_WATCHFUL;
 
             return $this->gdrive_app_fetch_access_token($code);
@@ -838,26 +839,27 @@ class Xcloner_Remote_Storage
         return $token;
     }
 
-    public function gdrive_refresh_token($client){
+    public function gdrive_refresh_token($client)
+    {
 
         $auth_token = $this->xcloner_settings->get_xcloner_option("xcloner_gdrive_access_token");
         $refresh_token = $this->xcloner_settings->get_xcloner_option("xcloner_gdrive_refresh_token");
 
-        if(!$refresh_token) {
+        if (!$refresh_token) {
             $refresh_token = $auth_token['refreh_token'];
         }
 
         if (!$this->xcloner_settings->get_xcloner_option("xcloner_gdrive_client_id")) {
-            $auth_token =$this->gdrive_app_fetch_access_token($auth_token, 'gdrive_auth_refresh');
-        }else{
+            $auth_token = $this->gdrive_app_fetch_access_token($auth_token, 'gdrive_auth_refresh');
+        } else {
             $auth_token = $client->refreshToken($refresh_token);
 
             if ($auth_token['access_token']) {
                 update_option("xcloner_gdrive_access_token", $auth_token);
                 update_option("xcloner_gdrive_refresh_token", $auth_token['refresh_token']);
-            }else{
+            } else {
                 $this->xcloner->trigger_message(
-                    "%s connection error: Failed to REFRESH the AUTH code - ".$auth_token['error_description'],
+                    "%s connection error: Failed to REFRESH the AUTH code - " . $auth_token['error_description'],
                     "error"
                 );
             }
@@ -992,7 +994,7 @@ class Xcloner_Remote_Storage
 
             /** optional config settings */
             'port' => $this->xcloner_settings->get_xcloner_option("xcloner_sftp_port", 22),
-            'root' => ($this->xcloner_settings->get_xcloner_option("xcloner_sftp_path")?$this->xcloner_settings->get_xcloner_option("xcloner_sftp_path"):'./'),
+            'root' => ($this->xcloner_settings->get_xcloner_option("xcloner_sftp_path") ? $this->xcloner_settings->get_xcloner_option("xcloner_sftp_path") : './'),
             'privateKey' => $this->xcloner_settings->get_xcloner_option("xcloner_sftp_private_key"),
             'timeout' => $this->xcloner_settings->get_xcloner_option("xcloner_sftp_timeout", 30),
             'directoryPerm' => 0755

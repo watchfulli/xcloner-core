@@ -1,5 +1,6 @@
 <?php
-namespace Watchfulli\XClonerCore;
+
+namespace Watchful\XClonerCore;
 
 /**
  * XCloner - Backup and Restore backup plugin for Wordpress
@@ -160,16 +161,16 @@ class Xcloner_Archive extends Tar
             $new_name = $this->archive_name;
 
             if (!stristr($new_name, "-diff")) {
-                $new_name = $this->archive_name."-diff".date("Y-m-d_H-i", $diff_timestamp_start);
+                $new_name = $this->archive_name . "-diff" . date("Y-m-d_H-i", $diff_timestamp_start);
             }
 
             $this->archive_name = $new_name;
         }
 
         if (isset($part) and $part) {
-            $new_name = preg_replace('/-part(\d*)/', "-part".$part, $this->archive_name);
+            $new_name = preg_replace('/-part(\d*)/', "-part" . $part, $this->archive_name);
             if (!stristr($new_name, "-part")) {
-                $new_name = $this->archive_name."-part".$part;
+                $new_name = $this->archive_name . "-part" . $part;
             }
 
             $this->archive_name = $new_name;
@@ -198,7 +199,7 @@ class Xcloner_Archive extends Tar
     public function get_archive_name_multipart()
     {
         $new_name = preg_replace('/-part(\d*)/', "", $this->archive_name);
-        return $new_name."-multipart".$this->xcloner_settings->get_backup_extension_name(".csv");
+        return $new_name . "-multipart" . $this->xcloner_settings->get_backup_extension_name(".csv");
     }
 
     /*
@@ -208,7 +209,7 @@ class Xcloner_Archive extends Tar
      */
     public function get_archive_name_with_extension()
     {
-        return $this->archive_name.$this->xcloner_settings->get_backup_extension_name();
+        return $this->archive_name . $this->xcloner_settings->get_backup_extension_name();
     }
 
     /*
@@ -243,7 +244,7 @@ class Xcloner_Archive extends Tar
         $headers = array('Content-Type: text/html; charset=UTF-8');
 
         if ($admin_email and $from) {
-            $headers[] = 'From: '.$from.' <'.$admin_email.'>';
+            $headers[] = 'From: ' . $from . ' <' . $admin_email . '>';
         }
 
         $return = wp_mail($to, $subject, $body, $headers);
@@ -273,7 +274,8 @@ class Xcloner_Archive extends Tar
         $params,
         $error_message = "",
         $additional = array()
-    ) {
+    )
+    {
         if (!$from) {
             $from = "XCloner Backup";
         }
@@ -317,20 +319,20 @@ class Xcloner_Archive extends Tar
         $body .= "<br />";
 
         if (isset($params['backup_params']->backup_comments)) {
-            $body .= __("Backup Comments: ").$params['backup_params']->backup_comments;
+            $body .= __("Backup Comments: ") . $params['backup_params']->backup_comments;
             $body .= "<br /><br />";
         }
 
         if ($this->xcloner_settings->get_xcloner_option('xcloner_enable_log')) {
-            $body .= __("Latest 50 Log Lines: ")."<br />".implode(
-                "<br />\n",
-                $this->logger->getLastDebugLines(50)
-            );
+            $body .= __("Latest 50 Log Lines: ") . "<br />" . implode(
+                    "<br />\n",
+                    $this->logger->getLastDebugLines(50)
+                );
         }
 
         $attachments = $this->filesystem->get_backup_attachments();
 
-        $attachments_archive = $this->xcloner_settings->get_xcloner_tmp_path().DS."info.tgz";
+        $attachments_archive = $this->xcloner_settings->get_xcloner_tmp_path() . DS . "info.tgz";
 
         $tar = $this;
         $tar->create($attachments_archive);
@@ -344,7 +346,7 @@ class Xcloner_Archive extends Tar
 
         $admin_email = $this->xcloner_settings->get_xcloner_option("admin_email");
 
-        $headers = array('Content-Type: text/html; charset=UTF-8', 'From: '.$from.' <'.$admin_email.'>');
+        $headers = array('Content-Type: text/html; charset=UTF-8', 'From: ' . $from . ' <' . $admin_email . '>');
 
         $return = wp_mail($to, $subject, $body, $headers, array($attachments_archive));
 
@@ -388,13 +390,13 @@ class Xcloner_Archive extends Tar
         if ($init) {
             $this->logger->info(sprintf(__("Initializing the backup archive %s"), $this->get_archive_name()));
 
-            $this->backup_archive->create($archive_info->getPath().DS.$archive_info->getFilename());
+            $this->backup_archive->create($archive_info->getPath() . DS . $archive_info->getFilename());
 
             $return['extra']['backup_init'] = 1;
         } else {
             $this->logger->info(sprintf(__("Opening for append the backup archive %s"), $this->get_archive_name()));
 
-            $this->backup_archive->openForAppend($archive_info->getPath().DS.$archive_info->getFilename());
+            $this->backup_archive->openForAppend($archive_info->getPath() . DS . $archive_info->getFilename());
 
             $return['extra']['backup_init'] = 0;
         }
@@ -625,7 +627,7 @@ class Xcloner_Archive extends Tar
 
         $file = $this->filesystem->get_filesystem("storage_filesystem_append")->getMetadata($path);
         //print_r($file_info);
-        $line = '"'.$file['path'].'","'.$file['timestamp'].'","'.$file['size'].'"'.PHP_EOL;
+        $line = '"' . $file['path'] . '","' . $file['timestamp'] . '","' . $file['size'] . '"' . PHP_EOL;
 
 
         $this->filesystem->get_filesystem("storage_filesystem_append")
@@ -671,7 +673,7 @@ class Xcloner_Archive extends Tar
         $this->backup_archive = $this;
         $this->backup_archive->setCompression($this->compression_level);
         $archive_info = $this->filesystem->get_storage_path_file_info($this->get_archive_name_with_extension());
-        $this->backup_archive->create($archive_info->getPath().DS.$archive_info->getFilename());
+        $this->backup_archive->create($archive_info->getPath() . DS . $archive_info->getFilename());
 
         return array($archive_info, $part);
     }
@@ -695,7 +697,7 @@ class Xcloner_Archive extends Tar
         }
 
         if (isset($file_info['archive_prefix_path'])) {
-            $file_info['target_path'] = $file_info['archive_prefix_path']."/".$file_info['path'];
+            $file_info['target_path'] = $file_info['archive_prefix_path'] . "/" . $file_info['path'];
         } else {
             $file_info['target_path'] = $file_info['path'];
         }
@@ -737,7 +739,7 @@ class Xcloner_Archive extends Tar
                 $is_tmp = 1;
                 $last_position = $this->backup_archive->appendFileData(
                     $this->filesystem->get_tmp_filesystem_adapter()
-                                                        ->applyPathPrefix($tmp_file),
+                        ->applyPathPrefix($tmp_file),
                     $file_info['target_path'],
                     $start_at_byte,
                     $byte_limit
@@ -804,7 +806,7 @@ class Xcloner_Archive extends Tar
      */
     public function appendFileData($file, $fileinfo = '', $start = 0, $limit = 0)
     {
-        $end = $start+($limit*512);
+        $end = $start + ($limit * 512);
 
         //check to see if we are at the begining of writing the file
         if (!$start) {
@@ -827,7 +829,7 @@ class Xcloner_Archive extends Tar
         fseek($fp, $start);
 
         if (!$fp) {
-            throw new ArchiveIOException('Could not open file for reading: '.$file);
+            throw new ArchiveIOException('Could not open file for reading: ' . $file);
         }
 
         // create file header
@@ -837,7 +839,7 @@ class Xcloner_Archive extends Tar
 
         $bytes = 0;
         // write data
-        while ($end >=ftell($fp) and !feof($fp)) {
+        while ($end >= ftell($fp) and !feof($fp)) {
             $data = fread($fp, 512);
             if ($data === false) {
                 break;
@@ -848,7 +850,6 @@ class Xcloner_Archive extends Tar
             $packed = pack("a512", $data);
             $bytes += $this->writebytes($packed);
         }
-
 
 
         //if we are not at the end of file, we return the current position for incremental writing
@@ -865,7 +866,7 @@ class Xcloner_Archive extends Tar
 
     public function open($file, $start_byte = 0)
     {
-       parent::open($file);
+        parent::open($file);
 
         if ($start_byte) {
             fseek($this->fh, $start_byte);
@@ -882,9 +883,9 @@ class Xcloner_Archive extends Tar
      */
     public function openForAppend($file = '')
     {
-        $this->file   = $file;
+        $this->file = $file;
         $this->memory = '';
-        $this->fh     = 0;
+        $this->fh = 0;
 
         if ($this->file) {
             // determine compression
@@ -893,7 +894,7 @@ class Xcloner_Archive extends Tar
             }
 
             if ($this->comptype === Archive::COMPRESS_GZIP) {
-                $this->fh = @gzopen($this->file, 'ab'.$this->complevel);
+                $this->fh = @gzopen($this->file, 'ab' . $this->complevel);
             } elseif ($this->comptype === Archive::COMPRESS_BZIP) {
                 $this->fh = @bzopen($this->file, 'a');
             } else {
@@ -901,11 +902,11 @@ class Xcloner_Archive extends Tar
             }
 
             if (!$this->fh) {
-                throw new ArchiveIOException('Could not open file for writing: '.$this->file);
+                throw new ArchiveIOException('Could not open file for writing: ' . $this->file);
             }
         }
         $this->writeaccess = true;
-        $this->closed      = false;
+        $this->closed = false;
     }
 
     /**
@@ -925,7 +926,7 @@ class Xcloner_Archive extends Tar
             throw new ArchiveIOException('Can not read from a closed archive');
         }
 
-		$files_counter = 0;
+        $files_counter = 0;
         $result = array();
 
         while ($read = $this->readbytes(512)) {
@@ -934,24 +935,22 @@ class Xcloner_Archive extends Tar
                 continue;
             }
 
-            if($files_limit)
-            {
-				if(++$files_counter > $files_limit)
-				{
-					$return['extracted_files'] = $result;
-					$return['start'] = ftell($this->fh)-512;
-					return $return;
-				}
-			}
+            if ($files_limit) {
+                if (++$files_counter > $files_limit) {
+                    $return['extracted_files'] = $result;
+                    $return['start'] = ftell($this->fh) - 512;
+                    return $return;
+                }
+            }
 
-			if($header['typeflag'] == 5)
-				$header['size'] = 0;
+            if ($header['typeflag'] == 5)
+                $header['size'] = 0;
 
             $this->skipbytes(ceil($header['size'] / 512) * 512);
             $result[] = $this->header2fileinfo($header);
         }
 
-		$return['extracted_files'] = $result;
+        $return['extracted_files'] = $result;
 
         $this->close();
         return $return;
@@ -975,10 +974,10 @@ class Xcloner_Archive extends Tar
         }
 
         $outdir = rtrim($outdir, '/');
-        if(!is_dir($outdir))
-				@mkdir($outdir, 0755, true);
-			else
-				@chmod($outdir, 0777);
+        if (!is_dir($outdir))
+            @mkdir($outdir, 0755, true);
+        else
+            @chmod($outdir, 0777);
 
         //@mkdir($outdir, 0777, true);
 
@@ -986,8 +985,8 @@ class Xcloner_Archive extends Tar
             throw new ArchiveIOException("Could not create directory '$outdir'");
         }
 
-		$files_counter = 0;
-		$return = array();
+        $files_counter = 0;
+        $return = array();
 
         $extracted = array();
         while ($dat = $this->readbytes(512)) {
@@ -997,15 +996,13 @@ class Xcloner_Archive extends Tar
                 continue;
             }
 
-            if($files_limit)
-            {
-				if(++$files_counter > $files_limit)
-				{
-					$return['extracted_files'] = $extracted;
-					$return['start'] = ftell($this->fh)-512;
-					return $return;
-				}
-			}
+            if ($files_limit) {
+                if (++$files_counter > $files_limit) {
+                    $return['extracted_files'] = $extracted;
+                    $return['start'] = ftell($this->fh) - 512;
+                    return $return;
+                }
+            }
 
             $fileinfo = $this->header2fileinfo($header);
 
@@ -1019,21 +1016,21 @@ class Xcloner_Archive extends Tar
             }
 
             // create output directory
-            $output    = $outdir.'/'.$fileinfo->getPath();
+            $output = $outdir . '/' . $fileinfo->getPath();
             $directory = ($fileinfo->getIsdir()) ? $output : dirname($output);
-            if(!is_dir($directory))
-				@mkdir($directory, 0755, true);
-			else
-				@chmod($directory, 0755);
+            if (!is_dir($directory))
+                @mkdir($directory, 0755, true);
+            else
+                @chmod($directory, 0755);
 
             // extract data
             if (!$fileinfo->getIsdir()) {
-				if(file_exists($output))
-					unlink($output);
+                if (file_exists($output))
+                    unlink($output);
 
                 $fp = fopen($output, "wb");
                 if (!$fp) {
-                    throw new ArchiveIOException('Could not open file for writing: '.$output);
+                    throw new ArchiveIOException('Could not open file for writing: ' . $output);
                 }
 
                 $size = floor($header['size'] / 512);

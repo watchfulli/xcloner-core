@@ -1,5 +1,6 @@
 <?php
-namespace Watchfulli\XClonerCore;
+
+namespace Watchful\XClonerCore;
 
 /**
  * XCloner - Backup and Restore backup plugin for Wordpress
@@ -76,25 +77,25 @@ class Xcloner_Api
 
         $this->xcloner_container = $xcloner_container;
 
-        $this->xcloner_settings         = $xcloner_container->get_xcloner_settings();
-        $this->logger                   = $xcloner_container->get_xcloner_logger()->withName("xcloner_api");
-        $this->xcloner_file_system      = $xcloner_container->get_xcloner_filesystem();
-        $this->xcloner_sanitization     = $xcloner_container->get_xcloner_sanitization();
-        $this->xcloner_requirements     = $xcloner_container->get_xcloner_requirements();
-        $this->archive_system           = $xcloner_container->get_archive_system();
-        $this->xcloner_database         = $xcloner_container->get_xcloner_database();
-        $this->xcloner_scheduler        = $xcloner_container->get_xcloner_scheduler();
-        $this->xcloner_encryption       = $xcloner_container->get_xcloner_encryption();
-        $this->xcloner_remote_storage   = $xcloner_container->get_xcloner_remote_storage();
+        $this->xcloner_settings = $xcloner_container->get_xcloner_settings();
+        $this->logger = $xcloner_container->get_xcloner_logger()->withName("xcloner_api");
+        $this->xcloner_file_system = $xcloner_container->get_xcloner_filesystem();
+        $this->xcloner_sanitization = $xcloner_container->get_xcloner_sanitization();
+        $this->xcloner_requirements = $xcloner_container->get_xcloner_requirements();
+        $this->archive_system = $xcloner_container->get_archive_system();
+        $this->xcloner_database = $xcloner_container->get_xcloner_database();
+        $this->xcloner_scheduler = $xcloner_container->get_xcloner_scheduler();
+        $this->xcloner_encryption = $xcloner_container->get_xcloner_encryption();
+        $this->xcloner_remote_storage = $xcloner_container->get_xcloner_remote_storage();
 
         $this->xcloner_database->show_errors = false;
 
         if (isset($_POST['API_ID'])) {
-            $this->logger->info("Processing ajax request ID ".substr(
-                $this->xcloner_sanitization->sanitize_input_as_string($_POST['API_ID']),
-                0,
-                15
-            ));
+            $this->logger->info("Processing ajax request ID " . substr(
+                    $this->xcloner_sanitization->sanitize_input_as_string($_POST['API_ID']),
+                    0,
+                    15
+                ));
         }
     }
 
@@ -153,9 +154,9 @@ class Xcloner_Api
 
         $this->process_params($params);
 
-        if ( isset( $_POST['id'] ) ) {
+        if (isset($_POST['id'])) {
 
-	    $_POST['id'] = $this->xcloner_sanitization->sanitize_input_as_int( $_POST['id'] );
+            $_POST['id'] = $this->xcloner_sanitization->sanitize_input_as_int($_POST['id']);
             $this->form_params['backup_params']['backup_name'] = $this->xcloner_sanitization->sanitize_input_as_string($_POST['backup_name']);
             $this->form_params['backup_params']['email_notification'] = $this->xcloner_sanitization->sanitize_input_as_string($_POST['email_notification']);
             if ($_POST['diff_start_date']) {
@@ -213,22 +214,22 @@ class Xcloner_Api
             }
         } else {
             $schedule['status'] = 1;
-            $schedule['start_at'] = strtotime($this->form_params['backup_params']['schedule_start_date'].
-                " ".$this->form_params['backup_params']['schedule_start_time']);
+            $schedule['start_at'] = strtotime($this->form_params['backup_params']['schedule_start_date'] .
+                " " . $this->form_params['backup_params']['schedule_start_time']);
 
             if ($schedule['start_at'] <= time()) {
                 $schedule['start_at'] = "";
             }
 
             //fixing table names assigment
-            foreach ($this->form_params['database'] as $db=>$tables) {
+            foreach ($this->form_params['database'] as $db => $tables) {
                 if ($db == "#") {
                     continue;
                 }
 
-                foreach ($tables as $key=>$table) {
+                foreach ($tables as $key => $table) {
                     //echo $this->form_params['database'][$db][$key];
-                    $this->form_params['database'][$db][$key] = substr($table, strlen($db)+1);
+                    $this->form_params['database'][$db][$key] = substr($table, strlen($db) + 1);
                 }
             }
         }
@@ -254,7 +255,7 @@ class Xcloner_Api
 
         if (!isset($_POST['id'])) {
             $this->xcloner_database->insert(
-                $this->xcloner_settings->get_table_prefix().'xcloner_scheduler',
+                $this->xcloner_settings->get_table_prefix() . 'xcloner_scheduler',
                 $schedule,
                 array(
                     '%s',
@@ -263,7 +264,7 @@ class Xcloner_Api
             );
         } else {
             $this->xcloner_database->update(
-                $this->xcloner_settings->get_table_prefix().'xcloner_scheduler',
+                $this->xcloner_settings->get_table_prefix() . 'xcloner_scheduler',
                 $schedule,
                 array('id' => $_POST['id']),
                 array(
@@ -461,7 +462,7 @@ class Xcloner_Api
         if (isset($params->backup_params)) {
             foreach ($params->backup_params as $param) {
                 $this->form_params['backup_params'][$param->name] = $this->xcloner_sanitization->sanitize_input_as_string($param->value);
-                $this->logger->debug("Adding form parameter ".$param->name.".".$param->value."\n", array(
+                $this->logger->debug("Adding form parameter " . $param->name . "." . $param->value . "\n", array(
                     'POST',
                     'fields filter'
                 ));
@@ -473,7 +474,7 @@ class Xcloner_Api
         if (isset($params->table_params)) {
             foreach ($params->table_params as $param) {
                 $this->form_params['database'][$param->parent][] = $this->xcloner_sanitization->sanitize_input_as_raw($param->id);
-                $this->logger->debug("Adding database filter ".$param->parent.".".$param->id."\n", array(
+                $this->logger->debug("Adding database filter " . $param->parent . "." . $param->id . "\n", array(
                     'POST',
                     'database filter'
                 ));
@@ -492,7 +493,7 @@ class Xcloner_Api
                 if (!in_array($param->parent, $this->form_params['excluded_files'])) {
                     //$this->form_params['excluded_files'][] = $this->xcloner_sanitization->sanitize_input_as_relative_path($param->id);
                     $unique_exclude_files[] = $param->id;
-                    $this->logger->debug("Adding file filter ".$param->id."\n", array(
+                    $this->logger->debug("Adding file filter " . $param->id . "\n", array(
                         'POST',
                         'exclude files filter'
                     ));
@@ -538,7 +539,7 @@ class Xcloner_Api
                 'text' => $this->xcloner_settings->get_xcloner_start_path(),
                 //'children' => true,
                 'state' => array('selected' => false, 'opened' => true),
-                'icon' => plugin_dir_url(dirname(__FILE__))."/admin/assets/file-icon-root.png"
+                'icon' => plugin_dir_url(dirname(__FILE__)) . "/admin/assets/file-icon-root.png"
             );
         }
 
@@ -564,7 +565,7 @@ class Xcloner_Api
             if ($file['type'] == "dir") {
                 $children = true;
             } else {
-                $text .= " (".$this->xcloner_requirements->file_format_size($file['size']).")";
+                $text .= " (" . $this->xcloner_requirements->file_format_size($file['size']) . ")";
             }
 
             if ($this->xcloner_file_system->is_excluded($file)) {
@@ -580,11 +581,11 @@ class Xcloner_Api
                 //'title' => "test",
                 'children' => $children,
                 'state' => array('selected' => $selected, 'opened' => false, "checkbox_disabled" => $selected),
-                'icon' => plugin_dir_url(dirname(__FILE__))."/admin/assets/file-icon-".strtolower(substr(
-                    $file['type'],
-                    0,
-                    1
-                )).".png"
+                'icon' => plugin_dir_url(dirname(__FILE__)) . "/admin/assets/file-icon-" . strtolower(substr(
+                        $file['type'],
+                        0,
+                        1
+                    )) . ".png"
             );
         }
 
@@ -631,10 +632,10 @@ class Xcloner_Api
                 $data[] = array(
                     'id' => $database['name'],
                     'parent' => '#',
-                    'text' => $database['name']." (".(int)$database['num_tables'].")",
+                    'text' => $database['name'] . " (" . (int)$database['num_tables'] . ")",
                     'children' => true,
                     'state' => $state,
-                    'icon' => plugin_dir_url(dirname(__FILE__))."/admin/assets/database-icon.png"
+                    'icon' => plugin_dir_url(dirname(__FILE__)) . "/admin/assets/database-icon.png"
                 );
             }
         } else {
@@ -648,9 +649,9 @@ class Xcloner_Api
                 $state = array();
 
                 if ($xcloner_backup_only_wp_tables and !stristr(
-                    $table['name'],
-                    $this->xcloner_settings->get_table_prefix()
-                )) {
+                        $table['name'],
+                        $this->xcloner_settings->get_table_prefix()
+                    )) {
                     continue;
                 }
 
@@ -659,12 +660,12 @@ class Xcloner_Api
                 }
 
                 $data[] = array(
-                    'id' => $database.".".$table['name'],
+                    'id' => $database . "." . $table['name'],
                     'parent' => $database,
-                    'text' => $table['name']." (".(int)$table['records'].")",
+                    'text' => $table['name'] . " (" . (int)$table['records'] . ")",
                     'children' => false,
                     'state' => $state,
-                    'icon' => plugin_dir_url(dirname(__FILE__))."/admin/assets/table-icon.png"
+                    'icon' => plugin_dir_url(dirname(__FILE__)) . "/admin/assets/table-icon.png"
                 );
             }
         }
@@ -712,17 +713,17 @@ class Xcloner_Api
         $return['data'] = array();
 
         foreach ($data as $res) {
-            $action = "<a href=\"#".$res->id."\" class=\"edit\" title='Edit'> <i class=\"material-icons \">edit</i></a>
-					<a href=\"#" . $res->id."\" class=\"delete\" title='Delete'><i class=\"material-icons  \">delete</i></a>";
+            $action = "<a href=\"#" . $res->id . "\" class=\"edit\" title='Edit'> <i class=\"material-icons \">edit</i></a>
+					<a href=\"#" . $res->id . "\" class=\"delete\" title='Delete'><i class=\"material-icons  \">delete</i></a>";
             if ($res->status) {
                 $status = '<i class="material-icons active status">timer</i>';
             } else {
                 $status = '<i class="material-icons status inactive">timer_off</i>';
             }
 
-            $next_run_time = wp_next_scheduled('xcloner_scheduler_'.$res->id, array($res->id));
+            $next_run_time = wp_next_scheduled('xcloner_scheduler_' . $res->id, array($res->id));
 
-            $next_run = date($this->xcloner_settings->get_xcloner_option('date_format')." ".$this->xcloner_settings->get_xcloner_option('time_format'), $next_run_time);
+            $next_run = date($this->xcloner_settings->get_xcloner_option('date_format') . " " . $this->xcloner_settings->get_xcloner_option('time_format'), $next_run_time);
 
             $remote_storage = $res->remote_storage;
 
@@ -732,17 +733,17 @@ class Xcloner_Api
 
             if (trim($next_run)) {
                 $date_text = date(
-                    $this->xcloner_settings->get_xcloner_option('date_format')." ".$this->xcloner_settings->get_xcloner_option('time_format'),
+                    $this->xcloner_settings->get_xcloner_option('date_format') . " " . $this->xcloner_settings->get_xcloner_option('time_format'),
                     $next_run_time + ($this->xcloner_settings->get_xcloner_option('gmt_offset') * HOUR_IN_SECONDS)
                 );
 
                 if ($next_run_time >= time()) {
-                    $next_run = "in ".human_time_diff($next_run_time, time());
+                    $next_run = "in " . human_time_diff($next_run_time, time());
                 } else {
                     $next_run = __("executed", 'xcloner-backup-and-restore');
                 }
 
-                $next_run = "<a href='#' title='".$date_text."'>".$next_run."</a>";
+                $next_run = "<a href='#' title='" . $date_text . "'>" . $next_run . "</a>";
                 //$next_run .=" ($date_text)";
             }
 
@@ -755,12 +756,12 @@ class Xcloner_Api
                     $metadata = $this->xcloner_file_system->get_storage_filesystem()->getMetadata($res->last_backup);
                     $backup_size = size_format($this->xcloner_file_system->get_backup_size($res->last_backup));
                     $backup_time = date(
-                        $this->xcloner_settings->get_xcloner_option('date_format')." ".$this->xcloner_settings->get_xcloner_option('time_format'),
+                        $this->xcloner_settings->get_xcloner_option('date_format') . " " . $this->xcloner_settings->get_xcloner_option('time_format'),
                         $metadata['timestamp'] + ($this->xcloner_settings->get_xcloner_option('gmt_offset') * HOUR_IN_SECONDS)
                     );
                 }
 
-                $backup_text = "<span title='".$backup_time."' class='shorten_string'>".$res->last_backup." (".$backup_size.")</span>";
+                $backup_text = "<span title='" . $backup_time . "' class='shorten_string'>" . $res->last_backup . " (" . $backup_size . ")</span>";
             }
 
             $schedules = $this->xcloner_scheduler->get_available_intervals();
@@ -870,7 +871,7 @@ class Xcloner_Api
         }
 
         $return['processing_file'] = $backup_file;
-        $return['total_size'] = filesize($this->xcloner_settings->get_xcloner_store_path().DS.$backup_file);
+        $return['total_size'] = filesize($this->xcloner_settings->get_xcloner_store_path() . DS . $backup_file);
 
         try {
             $this->logger->info(json_encode($_POST));
@@ -919,8 +920,7 @@ class Xcloner_Api
         $source_backup_file = $this->xcloner_sanitization->sanitize_input_as_string($_POST['file']);
         $start = $this->xcloner_sanitization->sanitize_input_as_int($_POST['start']);
         $iv = $this->xcloner_sanitization->sanitize_input_as_raw($_POST['iv']);
-        $decryption_key = $this->xcloner_sanitization->sanitize_input_as_raw($_POST['decryption_key']);
-        ;
+        $decryption_key = $this->xcloner_sanitization->sanitize_input_as_raw($_POST['decryption_key']);;
         $return['part'] = $this->xcloner_sanitization->sanitize_input_as_int($_POST['part']);
 
         $backup_file = $source_backup_file;
@@ -931,7 +931,7 @@ class Xcloner_Api
         }
 
         $return['processing_file'] = $backup_file;
-        $return['total_size'] = filesize($this->xcloner_settings->get_xcloner_store_path().DS.$backup_file);
+        $return['total_size'] = filesize($this->xcloner_settings->get_xcloner_store_path() . DS . $backup_file);
 
         try {
             $return = array_merge(
@@ -984,169 +984,170 @@ class Xcloner_Api
         foreach ($backup_list as $file_info):?>
             <?php
             if ($storage_selection == "gdrive") {
-                $file_info['path'] = $file_info['filename'].".".$file_info['extension'];
+                $file_info['path'] = $file_info['filename'] . "." . $file_info['extension'];
             }
-        $file_exists_on_local_storage = true;
+            $file_exists_on_local_storage = true;
 
-        if ($storage_selection) {
-            if (!$this->xcloner_file_system->get_storage_filesystem()->has($file_info['path'])) {
-                $file_exists_on_local_storage = false;
-            }
-        } ?>
+            if ($storage_selection) {
+                if (!$this->xcloner_file_system->get_storage_filesystem()->has($file_info['path'])) {
+                    $file_exists_on_local_storage = false;
+                }
+            } ?>
             <?php if (!isset($file_info['parent'])): ?>
 
                 <?php ob_start(); ?>
-                        <p>
-                        <label for="checkbox_<?php echo ++$i ?>">
-                            <input name="backup[]" value="<?php echo $file_info['basename'] ?>" type="checkbox"
-                                   id="checkbox_<?php echo $i ?>">
-                            <span>&nbsp;</span>
-                        </label>
-                        </p>
+                <p>
+                    <label for="checkbox_<?php echo ++$i ?>">
+                        <input name="backup[]" value="<?php echo $file_info['basename'] ?>" type="checkbox"
+                               id="checkbox_<?php echo $i ?>">
+                        <span>&nbsp;</span>
+                    </label>
+                </p>
                 <?php
                 $return['data'][$i][] = ob_get_contents();
-        ob_end_clean(); ?>
+                ob_end_clean(); ?>
 
                 <?php ob_start(); ?>
-                        <span class=""><?php echo $file_info['path'] ?></span>
-                        <?php if (!$file_exists_on_local_storage): ?>
-                            <a href="#"
-                               title="<?php echo __(
-            "This backup archive does not exist on your local server. If you wish to retain local copies of your backup archives as well as remote copies, please disable local clean-up in the main XCloner settings and/or your scheduled backup profile settings.",
-            "xcloner-backup-and-restore"
-        ) ?>"><i
-                                        class="material-icons backup_warning">warning</i></a>
-                        <?php endif ?>
-                        <?php
-                        if (isset($file_info['childs']) and is_array($file_info['childs'])):
-                            ?>
-                            <a href="#" title="expand" class="expand-multipart add"><i
-                                        class="material-icons">add</i></a>
-                            <a href="#" title="collapse" class="expand-multipart remove"><i class="material-icons">remove</i></a>
-                            <ul class="multipart">
-                                <?php foreach ($file_info['childs'] as $child): ?>
-                                    <li>
-                                        <?php echo $child[0] ?> (<?php echo esc_html(size_format($child[2])) ?>)
-                                        <?php
-                                        $child_exists_on_local_storage = true;
-        if ($storage_selection) {
-            if (!$this->xcloner_file_system->get_storage_filesystem()->has($child[0])) {
-                $child_exists_on_local_storage = false;
-            }
-        } ?>
-                                        <?php if (!$child_exists_on_local_storage): ?>
-                                            <a href="#"
-                                               title="<?php echo __(
-            "This backup archive does not exist on your local server. If you wish to retain local copies of your backup archives as well as remote copies, please disable local clean-up in the main XCloner settings and/or your scheduled backup profile settings.",
-            "xcloner-backup-and-restore"
-        ) ?>"><i
-                                                        class="material-icons backup_warning">warning</i></a>
-                                        <?php endif ?>
-                                        <?php if (!$storage_selection) : ?>
-                                            <a href="#<?php echo $child[0]; ?>" class="download"
-                                               title="Download Backup"><i class="material-icons">file_download</i></a>
+                <span class=""><?php echo $file_info['path'] ?></span>
+                <?php if (!$file_exists_on_local_storage): ?>
+                    <a href="#"
+                       title="<?php echo __(
+                           "This backup archive does not exist on your local server. If you wish to retain local copies of your backup archives as well as remote copies, please disable local clean-up in the main XCloner settings and/or your scheduled backup profile settings.",
+                           "xcloner-backup-and-restore"
+                       ) ?>"><i
+                                class="material-icons backup_warning">warning</i></a>
+                <?php endif ?>
+                <?php
+                if (isset($file_info['childs']) and is_array($file_info['childs'])):
+                    ?>
+                    <a href="#" title="expand" class="expand-multipart add"><i
+                                class="material-icons">add</i></a>
+                    <a href="#" title="collapse" class="expand-multipart remove"><i
+                                class="material-icons">remove</i></a>
+                    <ul class="multipart">
+                        <?php foreach ($file_info['childs'] as $child): ?>
+                            <li>
+                                <?php echo $child[0] ?> (<?php echo esc_html(size_format($child[2])) ?>)
+                                <?php
+                                $child_exists_on_local_storage = true;
+                                if ($storage_selection) {
+                                    if (!$this->xcloner_file_system->get_storage_filesystem()->has($child[0])) {
+                                        $child_exists_on_local_storage = false;
+                                    }
+                                } ?>
+                                <?php if (!$child_exists_on_local_storage): ?>
+                                    <a href="#"
+                                       title="<?php echo __(
+                                           "This backup archive does not exist on your local server. If you wish to retain local copies of your backup archives as well as remote copies, please disable local clean-up in the main XCloner settings and/or your scheduled backup profile settings.",
+                                           "xcloner-backup-and-restore"
+                                       ) ?>"><i
+                                                class="material-icons backup_warning">warning</i></a>
+                                <?php endif ?>
+                                <?php if (!$storage_selection) : ?>
+                                    <a href="#<?php echo $child[0]; ?>" class="download"
+                                       title="Download Backup"><i class="material-icons">file_download</i></a>
 
-                                            <?php if ($this->xcloner_encryption->is_encrypted_file($child[0])) :?>
-                                                <a href="#<?php echo $child[0] ?>" class="backup-decryption"
-                                                   title="<?php echo __('Backup Decryption', 'xcloner-backup-and-restore') ?>">
-                                                    <i class="material-icons">enhanced_encryption</i>
-                                                </a>
-                                            <?php else: ?>
-                                                <a href="#<?php echo $child[0] ?>" class="list-backup-content"
-                                                   title="<?php echo __(
-            'List Backup Content',
-            'xcloner-backup-and-restore'
-        ) ?>"><i
-                                                            class="material-icons">folder_open</i></a>
+                                    <?php if ($this->xcloner_encryption->is_encrypted_file($child[0])) : ?>
+                                        <a href="#<?php echo $child[0] ?>" class="backup-decryption"
+                                           title="<?php echo __('Backup Decryption', 'xcloner-backup-and-restore') ?>">
+                                            <i class="material-icons">enhanced_encryption</i>
+                                        </a>
+                                    <?php else: ?>
+                                        <a href="#<?php echo $child[0] ?>" class="list-backup-content"
+                                           title="<?php echo __(
+                                               'List Backup Content',
+                                               'xcloner-backup-and-restore'
+                                           ) ?>"><i
+                                                    class="material-icons">folder_open</i></a>
 
-                                                <a href="#<?php echo $child[0] ?>" class="backup-encryption"
-                                                   title="<?php echo __('Backup Encryption', 'xcloner-backup-and-restore') ?>">
-                                                    <i class="material-icons">no_encryption</i>
-                                                </a>
-                                            <?php endif?>
+                                        <a href="#<?php echo $child[0] ?>" class="backup-encryption"
+                                           title="<?php echo __('Backup Encryption', 'xcloner-backup-and-restore') ?>">
+                                            <i class="material-icons">no_encryption</i>
+                                        </a>
+                                    <?php endif ?>
 
-                                        <?php elseif ($storage_selection != "gdrive" && !$this->xcloner_file_system->get_storage_filesystem()->has($child[0])): ?>
-                                            <a href="#<?php echo $child[0] ?>" class="copy-remote-to-local"
-                                               title="<?php echo __(
-            'Push Backup To Local Storage',
-            'xcloner-backup-and-restore'
-        ) ?>"><i
-                                                        class="material-icons">file_upload</i></a>
-                                        <?php endif ?>
-                                    </li>
-                                <?php endforeach; ?>
-                            </ul>
-                        <?php endif; ?>
+                                <?php elseif ($storage_selection != "gdrive" && !$this->xcloner_file_system->get_storage_filesystem()->has($child[0])): ?>
+                                    <a href="#<?php echo $child[0] ?>" class="copy-remote-to-local"
+                                       title="<?php echo __(
+                                           'Push Backup To Local Storage',
+                                           'xcloner-backup-and-restore'
+                                       ) ?>"><i
+                                                class="material-icons">file_upload</i></a>
+                                <?php endif ?>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                <?php endif; ?>
                 <?php
                 $return['data'][$i][] = ob_get_contents();
-        ob_end_clean(); ?>
-                    <?php ob_start(); ?>
-                        <?php if (isset($file_info['timestamp'])) {
-            echo date("Y-m-d H:i", $file_info['timestamp']);
-        } ?>
+                ob_end_clean(); ?>
+                <?php ob_start(); ?>
+                <?php if (isset($file_info['timestamp'])) {
+                    echo date("Y-m-d H:i", $file_info['timestamp']);
+                } ?>
+                <?php
+                $return['data'][$i][] = ob_get_contents();
+                ob_end_clean(); ?>
+
+                <?php ob_start(); ?>
+                <?php echo esc_html(size_format($file_info['size'])) ?>
+                <?php
+                $return['data'][$i][] = ob_get_contents();
+                ob_end_clean(); ?>
+
+                <?php ob_start(); ?>
+
+                <a href="#<?php echo $file_info['basename']; ?>" class="download"
+                   title="<?php echo __('Download Backup', 'xcloner-backup-and-restore') ?>"><i
+                            class="material-icons">file_download</i></a>
+                <?php if (!$storage_selection): ?>
+                    <?php if (sizeof($available_storages)): ?>
+                        <a href="#<?php echo $file_info['basename'] ?>" class="cloud-upload"
+                           title="<?php echo __(
+                               'Send Backup To Remote Storage',
+                               'xcloner-backup-and-restore'
+                           ) ?>"><i
+                                    class="material-icons">swap_horiz</i></a>
+                    <?php endif ?>
                     <?php
-                        $return['data'][$i][] = ob_get_contents();
-        ob_end_clean(); ?>
-
-                    <?php ob_start(); ?>
-                        <?php echo esc_html(size_format($file_info['size'])) ?>
-                    <?php
-                        $return['data'][$i][] = ob_get_contents();
-        ob_end_clean(); ?>
-
-                    <?php ob_start(); ?>
-
-                            <a href="#<?php echo $file_info['basename']; ?>" class="download"
-                               title="<?php echo __('Download Backup', 'xcloner-backup-and-restore') ?>"><i
-                                        class="material-icons">file_download</i></a>
-                        <?php if (!$storage_selection): ?>
-                            <?php if (sizeof($available_storages)): ?>
-                                <a href="#<?php echo $file_info['basename'] ?>" class="cloud-upload"
-                                   title="<?php echo __(
-            'Send Backup To Remote Storage',
-            'xcloner-backup-and-restore'
-        ) ?>"><i
-                                            class="material-icons">swap_horiz</i></a>
-                            <?php endif ?>
-                            <?php
-                            $basename = $file_info['basename'];
-        if (isset($file_info['childs']) and sizeof($file_info['childs'])) {
-            $basename = $file_info['childs'][0][0];
-        } ?>
-                            <?php if ($this->xcloner_encryption->is_encrypted_file($basename)) :?>
-                                <a href="#<?php echo $file_info['basename'] ?>" class="backup-decryption"
-                                   title="<?php echo __('Backup Decryption', 'xcloner-backup-and-restore') ?>">
-                                    <i class="material-icons">enhanced_encryption</i>
-                                </a>
-                            <?php else: ?>
-                                <a href="#<?php echo $file_info['basename'] ?>" class="list-backup-content"
-                                    title="<?php echo __('List Backup Content', 'xcloner-backup-and-restore') ?>"><i
+                    $basename = $file_info['basename'];
+                    if (isset($file_info['childs']) and sizeof($file_info['childs'])) {
+                        $basename = $file_info['childs'][0][0];
+                    } ?>
+                    <?php if ($this->xcloner_encryption->is_encrypted_file($basename)) : ?>
+                        <a href="#<?php echo $file_info['basename'] ?>" class="backup-decryption"
+                           title="<?php echo __('Backup Decryption', 'xcloner-backup-and-restore') ?>">
+                            <i class="material-icons">enhanced_encryption</i>
+                        </a>
+                    <?php else: ?>
+                        <a href="#<?php echo $file_info['basename'] ?>" class="list-backup-content"
+                           title="<?php echo __('List Backup Content', 'xcloner-backup-and-restore') ?>"><i
                                     class="material-icons">folder_open</i></a>
 
-                                <a href="#<?php echo $file_info['basename'] ?>" class="backup-encryption"
-                                   title="<?php echo __('Backup Encryption', 'xcloner-backup-and-restore') ?>">
-                                    <i class="material-icons">no_encryption</i>
-                                </a>
-                            <?php endif?>
-                        <?php endif; ?>
-
-                        <a href="#<?php echo $file_info['basename'] ?>" class="delete"
-                           title="<?php echo __('Delete Backup', 'xcloner-backup-and-restore') ?>">
-                            <i class="material-icons">delete</i>
+                        <a href="#<?php echo $file_info['basename'] ?>" class="backup-encryption"
+                           title="<?php echo __('Backup Encryption', 'xcloner-backup-and-restore') ?>">
+                            <i class="material-icons">no_encryption</i>
                         </a>
-                        <?php if ($storage_selection and !$file_exists_on_local_storage): ?>
-                            <a href="#<?php echo $file_info['basename']; ?>" class="copy-remote-to-local"
-                               title="<?php echo __('Transfer a copy of the remote backup to local storage.', 'xcloner-backup-and-restore') ?>"><i
-                                        class="material-icons">swap_horiz</i></a>
-                        <?php endif ?>
+                    <?php endif ?>
+                <?php endif; ?>
 
-                    <?php
-                        $return['data'][$i][] = ob_get_contents();
-        ob_end_clean(); ?>
+                <a href="#<?php echo $file_info['basename'] ?>" class="delete"
+                   title="<?php echo __('Delete Backup', 'xcloner-backup-and-restore') ?>">
+                    <i class="material-icons">delete</i>
+                </a>
+                <?php if ($storage_selection and !$file_exists_on_local_storage): ?>
+                    <a href="#<?php echo $file_info['basename']; ?>" class="copy-remote-to-local"
+                       title="<?php echo __('Transfer a copy of the remote backup to local storage.', 'xcloner-backup-and-restore') ?>"><i
+                                class="material-icons">swap_horiz</i></a>
+                <?php endif ?>
+
+                <?php
+                $return['data'][$i][] = ob_get_contents();
+                ob_end_clean(); ?>
 
             <?php endif ?>
         <?php endforeach ?>
-    <?php
+        <?php
         $this->send_response($return, 0);
     }
 
@@ -1180,7 +1181,7 @@ class Xcloner_Api
 
         try {
             $tar = $this->archive_system;
-            $tar->open($this->xcloner_settings->get_xcloner_store_path().DS.$backup_file, $start);
+            $tar->open($this->xcloner_settings->get_xcloner_store_path() . DS . $backup_file, $start);
 
             $data = $tar->contents($this->xcloner_settings->get_xcloner_option('xcloner_files_to_process_per_request'));
         } catch (Exception $e) {
@@ -1191,7 +1192,7 @@ class Xcloner_Api
 
         $return['files'] = array();
         $return['finished'] = 1;
-        $return['total_size'] = filesize($this->xcloner_settings->get_xcloner_store_path().DS.$backup_file);
+        $return['total_size'] = filesize($this->xcloner_settings->get_xcloner_store_path() . DS . $backup_file);
         $i = 0;
 
         if (isset($data['extracted_files']) and is_array($data['extracted_files'])) {
@@ -1199,7 +1200,7 @@ class Xcloner_Api
                 $return['files'][$i]['path'] = $file->getPath();
                 $return['files'][$i]['size'] = $file->getSize();
                 $return['files'][$i]['mtime'] = date(
-                    $this->xcloner_settings->get_xcloner_option('date_format')." ".$this->xcloner_settings->get_xcloner_option('time_format'),
+                    $this->xcloner_settings->get_xcloner_option('date_format') . " " . $this->xcloner_settings->get_xcloner_option('time_format'),
                     $file->getMtime()
                 );
 
@@ -1349,14 +1350,14 @@ class Xcloner_Api
         $phar2->setStub($phar2->createDefaultStub('vendor/autoload.php', 'vendor/autoload.php'));
          * */
 
-        $tmp_file = $this->xcloner_settings->get_xcloner_tmp_path().DS."xcloner-restore.tgz";
+        $tmp_file = $this->xcloner_settings->get_xcloner_tmp_path() . DS . "xcloner-restore.tgz";
 
         $tar = $this->archive_system;
         $tar->create($tmp_file);
 
-        $vendor_phar_file = __DIR__."/../../../../restore/vendor.build.txt";
+        $vendor_phar_file = __DIR__ . "/../../../../restore/vendor.build.txt";
         if (!file_exists($vendor_phar_file)) {
-            $vendor_phar_file = __DIR__."/../../restore/vendor.build.txt";
+            $vendor_phar_file = __DIR__ . "/../../restore/vendor.build.txt";
         }
 
         $tar->addFile($vendor_phar_file, "vendor.phar");
@@ -1365,16 +1366,16 @@ class Xcloner_Api
 
         $files = $xcloner_plugin_filesystem->listContents("vendor/", true);
         foreach ($files as $file) {
-            $tar->addFile(dirname(__DIR__).DS.$file['path'], $file['path']);
+            $tar->addFile(dirname(__DIR__) . DS . $file['path'], $file['path']);
         }
 
-        $xcloner_restore_file = (__DIR__."/../../../../restore/xcloner_restore.php");
+        $xcloner_restore_file = (__DIR__ . "/../../../../restore/xcloner_restore.php");
         if (!file_exists($xcloner_restore_file)) {
-            $xcloner_restore_file = (__DIR__."/../../restore/xcloner_restore.php");
+            $xcloner_restore_file = (__DIR__ . "/../../restore/xcloner_restore.php");
         }
 
         $content = file_get_contents($xcloner_restore_file);
-        $content = str_replace("define('AUTH_KEY', '');", "define('AUTH_KEY', '".md5(AUTH_KEY)."');", $content);
+        $content = str_replace("define('AUTH_KEY', '');", "define('AUTH_KEY', '" . md5(AUTH_KEY) . "');", $content);
 
         $tar->addData("xcloner_restore.php", $content);
 
@@ -1383,11 +1384,11 @@ class Xcloner_Api
         if (file_exists($tmp_file)) {
             header('Content-Description: File Transfer');
             header('Content-Type: application/octet-stream');
-            header('Content-Disposition: attachment; filename="'.basename($tmp_file).'"');
+            header('Content-Disposition: attachment; filename="' . basename($tmp_file) . '"');
             header('Expires: 0');
             header('Cache-Control: must-revalidate');
             header('Pragma: public');
-            header('Content-Length: '.filesize($tmp_file));
+            header('Content-Length: ' . filesize($tmp_file));
             readfile($tmp_file);
         }
 
@@ -1434,9 +1435,9 @@ class Xcloner_Api
         header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
         header('Cache-Control: private', false);
         header('Content-Transfer-Encoding: binary');
-        header('Content-Disposition: attachment; filename="'.$backup_name_export.'";');
+        header('Content-Disposition: attachment; filename="' . $backup_name_export . '";');
         header('Content-Type: application/octet-stream');
-        header('Content-Length: '.$metadata['size']);
+        header('Content-Length: ' . $metadata['size']);
 
         ob_end_clean();
 
@@ -1500,7 +1501,7 @@ class Xcloner_Api
             $return = array();
             $return['error'] = true;
             $return['status'] = 500;
-            $return['message'] = "CURL communication error with the restore host. ".$e->getMessage();
+            $return['message'] = "CURL communication error with the restore host. " . $e->getMessage();
             $this->send_response($return, 0);
         }
 
@@ -1523,7 +1524,7 @@ class Xcloner_Api
         $this->check_access();
 
         define("XCLONER_PLUGIN_ACCESS", 1);
-        include_once(dirname(__DIR__).DS."restore".DS."xcloner_restore.php");
+        include_once(dirname(__DIR__) . DS . "restore" . DS . "xcloner_restore.php");
 
         return;
     }

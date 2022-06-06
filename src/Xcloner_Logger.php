@@ -1,5 +1,6 @@
 <?php
-namespace Watchfulli\XClonerCore;
+
+namespace Watchful\XClonerCore;
 
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
@@ -26,26 +27,26 @@ class Xcloner_Logger extends Logger
         }
 
         $hash = $xcloner_settings->get_hash();
-        if ($hash == "-".$xcloner_settings->get_server_unique_hash(5)) {
+        if ($hash == "-" . $xcloner_settings->get_server_unique_hash(5)) {
             $hash = "";
         }
 
-        $logger_path     = $xcloner_settings->get_xcloner_store_path().DS.$xcloner_settings->get_logger_filename();
+        $logger_path = $xcloner_settings->get_xcloner_store_path() . DS . $xcloner_settings->get_logger_filename();
         $logger_path_tmp = "";
 
         if ($hash) {
-            $logger_path_tmp = $xcloner_settings->get_xcloner_tmp_path().DS.$xcloner_settings->get_logger_filename(1);
+            $logger_path_tmp = $xcloner_settings->get_xcloner_tmp_path() . DS . $xcloner_settings->get_logger_filename(1);
         }
 
         $this->logger_path = $logger_path;
 
         if (!is_dir($xcloner_settings->get_xcloner_store_path()) or !is_writable($xcloner_settings->get_xcloner_store_path())) {
-            $logger_path     = 'php://stderr';
+            $logger_path = 'php://stderr';
             $logger_path_tmp = "";
         }
 
         if (!$xcloner_settings->get_xcloner_option('xcloner_enable_log')) {
-            $logger_path     = 'php://stderr';
+            $logger_path = 'php://stderr';
             $logger_path_tmp = "";
         }
 
@@ -98,8 +99,8 @@ class Xcloner_Logger extends Logger
         }
 
         $fp = fopen($this->main_logger_url, 'r');
-        fseek($fp, - 1, SEEK_END);
-        $pos      = ftell($fp);
+        fseek($fp, -1, SEEK_END);
+        $pos = ftell($fp);
         $lastLine = "";
 
         // Loop backword until we have our lines or we reach the start
@@ -112,7 +113,7 @@ class Xcloner_Logger extends Logger
                 }
                 $lastLine = '';
             } else {
-                $lastLine = $C.$lastLine;
+                $lastLine = $C . $lastLine;
             }
             fseek($fp, $pos--);
         }
