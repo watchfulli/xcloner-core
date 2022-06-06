@@ -4,7 +4,7 @@
     "verson": "2.0.0",
     "type": "package",
     "require": {
-        "php": ">=7.1.0",
+        "php": ">=7.2.5",
 	    "splitbrain/php-archive": "^1.0",
         "league/flysystem": "^1.0",
         "monolog/monolog": "^1.22",
@@ -18,15 +18,15 @@
     "license": "AGPL-3.0-or-later",
     "authors": [
         {
-            "name": "Ovidiu Liuta",
-            "email": "info@thinkovi.com"
+            "name": "Watchful.net",
+            "email": "hello@watchful.net"
         }
     ],
     "minimum-stability": "stable",
     "autoload": {
-        "psr-4": {"Watchfulli\\XClonerCore\\": "src/"}
+        "psr-4": {"Watchful\\XClonerCore\\": "src/"}
     },
     "platform" : {
-        "php" : "7.1.0"
+        "php" : "7.2.5"
     }
 }
