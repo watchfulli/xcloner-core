@@ -3,9 +3,7 @@ namespace Watchful\XClonerCore;
 
 class Xcloner_Requirements
 {
-
-    var $min_php_version = "7.1.0";
-    var $safe_mode = "Off";
+    const MIN_PHP_VERSION = "7.3.0";
 
     private $xcloner_settings;
     private $xcloner_container;
