@@ -2,23 +2,14 @@
 
 namespace Watchful\XClonerCore;
 
+use Exception;
 use League\Flysystem\Util;
 
 class Xcloner_Sanitization
 {
-
     /**
-     * Construct method
-     */
-    public function __construct()
-    {
-    }
-
-    /**
-     * Sanitize input as INT
-     *
-     * @param [type] $option
-     * @return void
+     * @param mixed $option
+     * @return int | false
      */
     public function sanitize_input_as_int($option)
     {
@@ -26,10 +17,8 @@ class Xcloner_Sanitization
     }
 
     /**
-     * Sanitize input as FLOAT
-     *
-     * @param [type] $option
-     * @return void
+     * @param mixed $option
+     * @return int | false
      */
     public function sanitize_input_as_float($option)
     {
@@ -37,10 +26,8 @@ class Xcloner_Sanitization
     }
 
     /**
-     * Sanitize input as STRING
-     *
-     * @param [type] $option
-     * @return void
+     * @param mixed $option
+     * @return string | false
      */
     public function sanitize_input_as_string($option)
     {
@@ -48,10 +35,8 @@ class Xcloner_Sanitization
     }
 
     /**
-     * Sanitize input as ABSOLUTE PATH
-     *
-     * @param [type] $option
-     * @return void
+     * @param mixed $option
+     * @return string | false
      */
     public function sanitize_input_as_absolute_path($option)
     {
@@ -63,7 +48,7 @@ class Xcloner_Sanitization
             add_settings_error('xcloner_error_message', '', __($e->getMessage()), 'error');
         }
 
-        if ($path and !is_dir($path)) {
+        if ($path && !is_dir($path)) {
             add_settings_error('xcloner_error_message', '', __(sprintf('Invalid Server Path %s', $option)), 'error');
 
             return false;
@@ -73,10 +58,8 @@ class Xcloner_Sanitization
     }
 
     /**
-     * Sanitize input as PATH
-     *
-     * @param [type] $option
-     * @return void
+     * @param mixed $option
+     * @return string | false
      */
     public function sanitize_input_as_path($option)
     {
@@ -84,24 +67,23 @@ class Xcloner_Sanitization
     }
 
     /**
-     * Sanitize input as RELATIVE PATH
-     *
-     * @param [type] $option
-     * @return void
+     * @param mixed $option
+     * @return string | false
      */
     public function sanitize_input_as_relative_path($option)
     {
         $option = filter_var($option, FILTER_SANITIZE_URL);
-        $option = str_replace("..", "", $option);
+        if ($option && !is_dir($option)) {
+            add_settings_error('xcloner_error_message', '', __(sprintf('Invalid Server Path %s', $option)));
 
-        return $option;
+            return false;
+        }
+        return str_replace("..", "", $option);
     }
 
     /**
-     * Sanitize input as EMAIL
-     *
-     * @param [type] $option
-     * @return void
+     * @param mixed $option
+     * @return string | false
      */
     public function sanitize_input_as_email($option)
     {
@@ -109,10 +91,8 @@ class Xcloner_Sanitization
     }
 
     /**
-     * Undocumented function as RAW
-     *
-     * @param [type] $option
-     * @return void
+     * @param mixed $option
+     * @return string | false
      */
     public function sanitize_input_as_raw($option)
     {
