@@ -27,10 +27,6 @@ class Xcloner_Requirements
             return false;
         }
 
-        if (!$this->check_safe_mode(1)) {
-            return false;
-        }
-
         if (!$this->check_xcloner_start_path(1)) {
             return false;
         }
@@ -55,7 +51,7 @@ class Xcloner_Requirements
     {
 
         if ($return_bool == 1) {
-            if (version_compare(phpversion(), $this->min_php_version, '<')) {
+            if (version_compare(phpversion(), self::MIN_PHP_VERSION, '<')) {
                 return false;
             } else {
                 return true;
@@ -63,26 +59,6 @@ class Xcloner_Requirements
         }
 
         return phpversion();
-    }
-
-    public function check_safe_mode($return_bool = 0)
-    {
-        /*no longer needed for PHP 7*/
-        $safe_mode = "Off";
-
-        /*if($return_bool)
-        {
-            if( ini_get('safe_mode') )
-                return false;
-            else
-                return true;
-        }
-
-        if( ini_get('safe_mode') )
-            $safe_mode = "On";
-        * */
-
-        return $safe_mode;
     }
 
     public function check_xcloner_start_path($return_bool = 0)
@@ -179,7 +155,7 @@ class Xcloner_Requirements
                 return round($bytes / (1 << $power), $decimals) . ' ' . $unit_list[$i];
             }
         }
+
+        return $bytes . ' ' . $unit_list[0];
     }
 }
-
-?>
