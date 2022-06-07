@@ -1,6 +1,6 @@
 <?php
 
-namespace Watchful\XClonerCore;
+namespace Watchfulli\XClonerCore;
 
 use Exception;
 use League\Flysystem\Util;

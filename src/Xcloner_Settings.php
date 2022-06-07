@@ -1,5 +1,5 @@
 <?php
-namespace Watchful\XClonerCore;
+namespace Watchfulli\XClonerCore;
 
 class Xcloner_Settings
 {

@@ -1,7 +1,8 @@
 <?php
 
-namespace Watchful\XClonerCore;
+namespace Watchfulli\XClonerCore;
 
+use Exception;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\RotatingFileHandler;

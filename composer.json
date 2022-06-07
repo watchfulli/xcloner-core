@@ -26,7 +26,8 @@
   "minimum-stability": "stable",
   "autoload": {
     "psr-4": {
-      "Watchful\\XClonerCore\\": "src/"
+      "Watchfulli\\XClonerCore\\": "src/",
+      "watchfulli\\XClonerCore\\": "src/"
     }
   },
   "platform": {

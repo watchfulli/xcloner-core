@@ -1,5 +1,5 @@
 <?php
-namespace Watchful\XClonerCore;
+namespace Watchfulli\XClonerCore;
 
 class Xcloner_Requirements
 {
@@ -38,11 +38,6 @@ class Xcloner_Requirements
         }
 
         return true;
-    }
-
-    public function get_constant($var)
-    {
-        return $this->$var;
     }
 
     public function check_min_php_version($return_bool = 0)

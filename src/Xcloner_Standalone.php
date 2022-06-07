@@ -1,19 +1,13 @@
 <?php
 
-namespace Watchful\XClonerCore;
+namespace Watchfulli\XClonerCore;
 
 define('XCLONER_STANDALONE_MODE', true);
 
-//require_once(__DIR__.'/../vendor/autoload.php');
-
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
-use Monolog\Handler\RotatingFileHandler;
 
 include_once(__DIR__ . "/../lib/mock_wp_functions.php");
-
-//require_once(__DIR__ . '/../includes/class-xcloner.php');
-
 
 class Xcloner_Standalone extends Xcloner
 {
@@ -54,8 +48,6 @@ class Xcloner_Standalone extends Xcloner
         $this->xcloner_file_transfer = new Xcloner_File_Transfer($this);
         $this->xcloner_encryption = new Xcloner_Encryption($this);
         $this->xcloner_sanitization = new Xcloner_Sanitization();
-
-        //$this->start();
     }
 
     /**
@@ -99,7 +91,7 @@ class Xcloner_Standalone extends Xcloner
     /**
      * Get Xcloner Main Class Container
      *
-     * @return void
+     * @return self
      */
     private function get_xcloner_container()
     {
