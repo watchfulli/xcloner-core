@@ -73,9 +73,8 @@ class Xcloner_Sanitization
     public function sanitize_input_as_relative_path($option)
     {
         $option = filter_var($option, FILTER_SANITIZE_URL);
-        if ($option && !is_dir($option)) {
+        if (!$option) {
             add_settings_error('xcloner_error_message', '', __(sprintf('Invalid Server Path %s', $option)));
-
             return false;
         }
         return str_replace("..", "", $option);
