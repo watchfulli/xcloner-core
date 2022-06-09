@@ -55,7 +55,7 @@ class Xcloner_Settings
     /**
      * Get XCloner Main Container
      *
-     * @return void
+     * @return Xcloner_Standalone
      */
     private function get_xcloner_container()
     {
@@ -230,7 +230,7 @@ class Xcloner_Settings
     /**
      * Get Backup Hash
      *
-     * @return void
+     * @return string
      */
     public function get_hash($readonly = false)
     {
@@ -238,14 +238,13 @@ class Xcloner_Settings
             $this->set_hash("-".$this->get_server_unique_hash(5));
         }
 
-        //echo $this->hash;
         return $this->hash;
     }
 
     /**
      * Generate New Hash
      *
-     * @return void
+     * @return string
      */
     public function generate_new_hash()
     {
@@ -262,7 +261,7 @@ class Xcloner_Settings
      * Set New Hash
      *
      * @param string $hash
-     * @return void
+     * @return self
      */
     public function set_hash($hash = "")
     {
@@ -278,15 +277,13 @@ class Xcloner_Settings
     /**
      * Get Default Backup Name
      *
-     * @return void
+     * @return string
      */
     public function get_default_backup_name()
     {
         $data = parse_url(get_site_url());
 
-        $backup_name = "backup_[domain]".(isset($data['port']) ? "_".$data['port'] : "")."-[time]-".($this->get_enable_mysql_backup() ? "sql" : "nosql");
-
-        return $backup_name;
+        return "backup_[domain]".(isset($data['port']) ? "_".$data['port'] : "")."-[time]-".($this->get_enable_mysql_backup() ? "sql" : "nosql");
     }
 
     /**
@@ -348,7 +345,7 @@ class Xcloner_Settings
     /**
      * Get Database Tables Prefix
      *
-     * @return void
+     * @return string
      */
     public function get_table_prefix()
     {
@@ -360,16 +357,14 @@ class Xcloner_Settings
      */
     public function get_xcloner_option($option = "")
     {
-        $data = get_option($option);
-
-        return $data;
+        return get_option($option);
     }
 
     /**
      * Get Server Unique Hash used to generate the unique backup name
      *
      * @param integer $strlen
-     * @return void
+     * @return string
      */
     public function get_server_unique_hash($strlen = 0)
     {
@@ -387,21 +382,21 @@ class Xcloner_Settings
         $this->xcloner_sanitization = $this->get_xcloner_container()->get_xcloner_sanitization();
 
         //ADDING MISSING OPTIONS
-        if (false == $this->get_xcloner_option('xcloner_mysql_settings_page')) {
+        if (!$this->get_xcloner_option('xcloner_mysql_settings_page')) {
             update_option('xcloner_mysql_settings_page', '');
-        } // end if
+        }
 
-        if (false == $this->get_xcloner_option('xcloner_cron_settings_page')) {
+        if (!$this->get_xcloner_option('xcloner_cron_settings_page')) {
             update_option('xcloner_cron_settings_page', '');
-        } // end if
+        }
 
-        if (false == $this->get_xcloner_option('xcloner_system_settings_page')) {
+        if (!$this->get_xcloner_option('xcloner_system_settings_page')) {
             update_option('xcloner_system_settings_page', '');
-        } // end if
+        }
 
-        if (false == $this->get_xcloner_option('xcloner_cleanup_settings_page')) {
+        if (!$this->get_xcloner_option('xcloner_cleanup_settings_page')) {
             update_option('xcloner_cleanup_settings_page', '');
-        } // end if
+        }
 
 
         //ADDING SETTING SECTIONS

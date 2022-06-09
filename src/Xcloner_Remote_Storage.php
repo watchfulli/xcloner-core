@@ -231,9 +231,9 @@ class Xcloner_Remote_Storage
 
     /**
      * Xcloner_Remote_Storage constructor.
-     * @param Xcloner_Standalone $xcloner_container
+     * @param Xcloner $xcloner_container
      */
-    public function __construct(Xcloner_Standalone $xcloner_container)
+    public function __construct(Xcloner $xcloner_container)
     {
         $this->xcloner_sanitization = $xcloner_container->get_xcloner_sanitization();
         $this->xcloner_file_system = $xcloner_container->get_xcloner_filesystem();

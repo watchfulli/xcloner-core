@@ -67,8 +67,6 @@ class Xcloner_Standalone extends Xcloner
             $data['id'] = $profile_id;
         }
 
-        //print_r($data);exit;
-
         return $this->xcloner_scheduler->xcloner_scheduler_callback($data['id'], $data, $this);
     }
 
@@ -86,15 +84,5 @@ class Xcloner_Standalone extends Xcloner
         if (property_exists($this, $property)) {
             return $this->$property;
         }
-    }
-
-    /**
-     * Get Xcloner Main Class Container
-     *
-     * @return self
-     */
-    private function get_xcloner_container()
-    {
-        return $this;
     }
 }
