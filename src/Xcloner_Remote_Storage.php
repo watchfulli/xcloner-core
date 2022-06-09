@@ -29,14 +29,17 @@ namespace Watchfulli\XClonerCore;
  *
  */
 
+use Exception;
+use Hypweb\Flysystem\GoogleDrive\GoogleDriveAdapter;
 use League\Flysystem\Config;
 use League\Flysystem\Filesystem;
 use League\Flysystem\Adapter\Local;
 
-use League\Flysystem\Adapter\Ftp as Adapter;
+use League\Flysystem\Adapter\Ftp as FtpAdapter;
 
 use League\Flysystem\Sftp\SftpAdapter;
 
+use League\Flysystem\WebDAV\WebDAVAdapter;
 use Srmklive\Dropbox\Client\DropboxClient;
 use Srmklive\Dropbox\Adapter\DropboxAdapter;
 
@@ -207,7 +210,7 @@ class Xcloner_Remote_Storage
         'eu-west-1' => 'EU (Ireland)',
         'eu-central-1' => 'EU (Frankfurt)',
         'eu-west-2' => 'EU (London)',
-        'eu-west-2' => 'EU (Paris)',
+        'eu-west-3' => 'EU (Paris)',
         'eu-south-1' => 'EU (Milan)',
         'eu-north-1' => 'EU (Stockholm)',
         'ap-northeast-1' => 'Asia Pacific (Tokyo)',
@@ -228,9 +231,9 @@ class Xcloner_Remote_Storage
 
     /**
      * Xcloner_Remote_Storage constructor.
-     * @param Xcloner $xcloner_container
+     * @param Xcloner_Standalone $xcloner_container
      */
-    public function __construct(Xcloner $xcloner_container)
+    public function __construct(Xcloner_Standalone $xcloner_container)
     {
         $this->xcloner_sanitization = $xcloner_container->get_xcloner_sanitization();
         $this->xcloner_file_system = $xcloner_container->get_xcloner_filesystem();
@@ -289,7 +292,7 @@ class Xcloner_Remote_Storage
             if ($action == 'd' && function_exists('openssl_decrypt') && base64_decode($string)) {
                 $decrypt = openssl_decrypt(base64_decode($string), $encrypt_method, $key, 0, $iv);
                 if ($decrypt) {
-                    //we check if decrypt was succesful
+                    //we check if decrypt was successful
                     $output = $decrypt;
                 }
             }
@@ -355,6 +358,7 @@ class Xcloner_Remote_Storage
         }
 
         $this->get_xcloner_container()->check_dependencies();
+        return true;
     }
 
     public function check($action = "ftp")
@@ -378,6 +382,7 @@ class Xcloner_Remote_Storage
 
     /**
      * @param string $storage_type
+     * @throws Exception
      */
     public function verify_filesystem($storage_type)
     {
@@ -398,7 +403,7 @@ class Xcloner_Remote_Storage
 
         if ($storage_type == "gdrive") {
             if (!is_array($filesystem->listContents())) {
-                throw new \Exception(__("Could not read data", 'xcloner-backup-and-restore'));
+                throw new Exception(__("Could not read data", 'xcloner-backup-and-restore'));
             }
             $this->logger->debug(sprintf("I can list data from remote storage %s", strtoupper($storage_type)));
 
@@ -407,19 +412,19 @@ class Xcloner_Remote_Storage
 
         //testing write access
         if (!$filesystem->write($test_file, "data")) {
-            throw new \Exception(__("Could not write data", 'xcloner-backup-and-restore'));
+            throw new Exception(__("Could not write data", 'xcloner-backup-and-restore'));
         }
         $this->logger->debug(sprintf("I can write data to remote storage %s", strtoupper($storage_type)));
 
         //testing read access
         if (!$filesystem->has($test_file)) {
-            throw new \Exception(__("Could not read data", 'xcloner-backup-and-restore'));
+            throw new Exception(__("Could not read data", 'xcloner-backup-and-restore'));
         }
         $this->logger->debug(sprintf("I can read data to remote storage %s", strtoupper($storage_type)));
 
         //delete test file
         if (!$filesystem->delete($test_file)) {
-            throw new \Exception(__("Could not delete data", 'xcloner-backup-and-restore'));
+            throw new Exception(__("Could not delete data", 'xcloner-backup-and-restore'));
         }
         $this->logger->debug(sprintf("I can delete data to remote storage %s", strtoupper($storage_type)));
 
@@ -577,16 +582,19 @@ class Xcloner_Remote_Storage
         return array($adapter, $filesystem);
     }
 
+    /**
+     * @throws Exception
+     */
     public function get_azure_filesystem()
     {
         $this->logger->info(sprintf("Creating the AZURE BLOB remote storage connection"), array(""));
 
         if (version_compare(phpversion(), '7.1.0', '<')) {
-            throw new \Exception("AZURE BLOB requires PHP 7.1 to be installed!");
+            throw new Exception("AZURE BLOB requires PHP 7.1 to be installed!");
         }
 
         if (!class_exists('XmlWriter')) {
-            throw new \Exception("AZURE BLOB requires libxml PHP module to be installed with XmlWriter class enabled!");
+            throw new Exception("AZURE BLOB requires libxml PHP module to be installed with XmlWriter class enabled!");
         }
 
         $endpoint = sprintf(
@@ -610,10 +618,6 @@ class Xcloner_Remote_Storage
     {
         $this->logger->info(sprintf("Creating the DROPBOX remote storage connection"), array(""));
 
-        if (version_compare(phpversion(), '7.1.0', '<')) {
-            throw new \Exception("DROPBOX requires PHP 7.1 to be installed!");
-        }
-
         $client = new DropboxClient($this->xcloner_settings->get_xcloner_option("xcloner_dropbox_access_token"));
         $adapter = new DropboxAdapter($client, $this->xcloner_settings->get_xcloner_option("xcloner_dropbox_prefix"));
 
@@ -624,16 +628,15 @@ class Xcloner_Remote_Storage
         return array($adapter, $filesystem);
     }
 
+    /**
+     * @throws Exception
+     */
     public function get_aws_filesystem()
     {
         $this->logger->info(sprintf("Creating the S3 remote storage connection"), array(""));
 
-        if (version_compare(phpversion(), '7.1.0', '<')) {
-            throw new \Exception("S3 class requires PHP 7.1 to be installed!");
-        }
-
         if (!class_exists('XmlWriter')) {
-            throw new \Exception("AZURE BLOB requires libxml PHP module to be installed with XmlWriter class enabled!");
+            throw new Exception("AZURE BLOB requires libxml PHP module to be installed with XmlWriter class enabled!");
         }
 
 
@@ -664,10 +667,6 @@ class Xcloner_Remote_Storage
     {
         $this->logger->info(sprintf("Creating the BACKBLAZE remote storage connection"), array(""));
 
-        if (version_compare(phpversion(), '7.1.0', '<')) {
-            throw new \Exception("BACKBLAZE API requires PHP 7.1 to be installed!");
-        }
-
         $client = new B2Client(
             $this->xcloner_settings->get_xcloner_option("xcloner_backblaze_account_id"),
             $this->xcloner_settings->get_xcloner_option("xcloner_backblaze_application_key")
@@ -685,10 +684,6 @@ class Xcloner_Remote_Storage
     {
         $this->logger->info(sprintf("Creating the WEBDAV remote storage connection"), array(""));
 
-        if (version_compare(phpversion(), '7.1.0', '<')) {
-            throw new \Exception("WEBDAV API requires PHP 7.1 to be installed!");
-        }
-
         $settings = array(
             'baseUri' => $this->xcloner_settings->get_xcloner_option("xcloner_webdav_url"),
             'userName' => $this->xcloner_settings->get_xcloner_option("xcloner_webdav_username"),
@@ -698,7 +693,7 @@ class Xcloner_Remote_Storage
         );
 
         $client = new \Sabre\DAV\Client($settings);
-        $adapter = new \League\Flysystem\WebDAV\WebDAVAdapter($client, $this->xcloner_settings->get_xcloner_option("xcloner_webdav_target_folder"));
+        $adapter = new WebDAVAdapter($client, $this->xcloner_settings->get_xcloner_option("xcloner_webdav_target_folder"));
         $filesystem = new Filesystem($adapter, new Config([
             'disable_asserts' => true,
         ]));
@@ -875,7 +870,7 @@ class Xcloner_Remote_Storage
     public function get_gdrive_filesystem()
     {
         if (version_compare(phpversion(), '7.1.0', '<')) {
-            throw new \Exception("Google Drive API requires PHP 7.1 to be installed!");
+            throw new Exception("Google Drive API requires PHP 7.1 to be installed!");
         }
 
         $this->logger->info(sprintf("Creating the Google Drive remote storage connection"), array(""));
@@ -885,7 +880,7 @@ class Xcloner_Remote_Storage
         if (!$client) {
             $error_msg = "Could not initialize the Google Drive Class, please check that the xcloner-google-drive plugin is enabled...";
             $this->logger->error($error_msg);
-            throw new \Exception($error_msg);
+            throw new Exception($error_msg);
         }
 
         $auth_token = $this->xcloner_settings->get_xcloner_option("xcloner_gdrive_access_token");
@@ -946,10 +941,10 @@ class Xcloner_Remote_Storage
         if (class_exists('\XCloner_Google_Drive_Adapter')) {
             $adapter = new \XCloner_Google_Drive_Adapter($service, $folderID);
         } else {
-            $adapter = new \Hypweb\Flysystem\GoogleDrive\GoogleDriveAdapter($service, $folderID);
+            $adapter = new GoogleDriveAdapter($service, $folderID);
         }
 
-        $filesystem = new \League\Flysystem\Filesystem($adapter, new Config([
+        $filesystem = new Filesystem($adapter, new Config([
             'disable_asserts' => true,
         ]));
 
@@ -961,7 +956,7 @@ class Xcloner_Remote_Storage
     {
         $this->logger->info(sprintf("Creating the FTP remote storage connection"), array(""));
 
-        $adapter = new Adapter([
+        $adapter = new FtpAdapter([
             'host' => $this->xcloner_settings->get_xcloner_option("xcloner_ftp_hostname"),
             'username' => $this->xcloner_settings->get_xcloner_option("xcloner_ftp_username"),
             'password' => $this->xcloner_settings->get_xcloner_option("xcloner_ftp_password"),
