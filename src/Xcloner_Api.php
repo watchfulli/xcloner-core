@@ -1,5 +1,5 @@
 <?php
-namespace watchfulli\XClonerCore;
+namespace Watchfulli\XClonerCore;
 
 /**
  * XCloner - Backup and Restore backup plugin for Wordpress
@@ -154,7 +154,7 @@ class Xcloner_Api
         $this->process_params($params);
 
         if ( isset( $_POST['id'] ) ) {
-		
+
 	    $_POST['id'] = $this->xcloner_sanitization->sanitize_input_as_int( $_POST['id'] );
             $this->form_params['backup_params']['backup_name'] = $this->xcloner_sanitization->sanitize_input_as_string($_POST['backup_name']);
             $this->form_params['backup_params']['email_notification'] = $this->xcloner_sanitization->sanitize_input_as_string($_POST['email_notification']);
@@ -165,7 +165,7 @@ class Xcloner_Api
             }
             $this->form_params['backup_params']['schedule_name'] = $this->xcloner_sanitization->sanitize_input_as_string($_POST['schedule_name']);
             $this->form_params['backup_params']['backup_encrypt'] = $this->xcloner_sanitization->sanitize_input_as_int($_POST['backup_encrypt']);
-            
+
             $this->form_params['backup_params']['start_at'] = strtotime($_POST['schedule_start_date']);
             $this->form_params['backup_params']['schedule_frequency'] = $this->xcloner_sanitization->sanitize_input_as_string($_POST['schedule_frequency']);
             $this->form_params['backup_params']['schedule_storage'] = $this->xcloner_sanitization->sanitize_input_as_string($_POST['schedule_storage']);
@@ -173,7 +173,7 @@ class Xcloner_Api
                 $_POST['backup_delete_after_remote_transfer'] = 0;
             }
             $this->form_params['backup_params']['backup_delete_after_remote_transfer'] = $this->xcloner_sanitization->sanitize_input_as_int($_POST['backup_delete_after_remote_transfer']);
-            
+
             $this->form_params['database'] = (stripslashes($this->xcloner_sanitization->sanitize_input_as_raw($_POST['table_params'])));
             $this->form_params['excluded_files'] = (stripslashes($this->xcloner_sanitization->sanitize_input_as_raw($_POST['excluded_files'])));
 
@@ -249,7 +249,7 @@ class Xcloner_Api
         }
         $schedule['remote_storage'] = $this->form_params['backup_params']['schedule_storage'];
         //$schedule['backup_type'] = $this->form_params['backup_params']['backup_type'];
-        
+
         $schedule['params'] = json_encode($this->form_params);
 
         if (!isset($_POST['id'])) {
@@ -543,7 +543,7 @@ class Xcloner_Api
         }
 
         try {
-            $files = $this->xcloner_file_system->directory($folder);
+            $files = $this->xcloner_file_system->list_directory($folder);
         } catch (Exception $e) {
             print $e->getMessage();
             $this->logger->error($e->getMessage());
@@ -1095,7 +1095,7 @@ class Xcloner_Api
         ob_end_clean(); ?>
 
                     <?php ob_start(); ?>
-                        
+
                             <a href="#<?php echo $file_info['basename']; ?>" class="download"
                                title="<?php echo __('Download Backup', 'xcloner-backup-and-restore') ?>"><i
                                         class="material-icons">file_download</i></a>
@@ -1161,7 +1161,7 @@ class Xcloner_Api
         $return = array();
 
         $source_backup_file = $this->xcloner_sanitization->sanitize_input_as_string($_POST['file']);
-        
+
         $start = $this->xcloner_sanitization->sanitize_input_as_int($_POST['start']);
         $return['part'] = $this->xcloner_sanitization->sanitize_input_as_int($_POST['part']);
 
@@ -1353,14 +1353,14 @@ class Xcloner_Api
 
         $tar = $this->archive_system;
         $tar->create($tmp_file);
-        
+
         $vendor_phar_file = __DIR__."/../../../../restore/vendor.build.txt";
         if (!file_exists($vendor_phar_file)) {
             $vendor_phar_file = __DIR__."/../../restore/vendor.build.txt";
         }
 
         $tar->addFile($vendor_phar_file, "vendor.phar");
-        
+
         //$tar->addFile(dirname(__DIR__)."/restore/vendor.tgz", "vendor.tgz");
 
         $files = $xcloner_plugin_filesystem->listContents("vendor/", true);
@@ -1547,7 +1547,7 @@ class Xcloner_Api
         if (ob_get_length()) {
             //ob_clean();
         }
-        
+
         return wp_send_json($data);
     }
 }

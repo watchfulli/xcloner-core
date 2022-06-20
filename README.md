@@ -14,7 +14,7 @@ Local composer.json should contain this custom repository for now
     ]
  ```
 
-then 
+then
 
 ```composer require watchfulli/xcloner-core```
 
@@ -41,7 +41,7 @@ if (!$json_config) {
 }
 
 //pass json config to Xcloner_Standalone lib
-$xcloner_backup = new watchfulli\XClonerCore\Xcloner_Standalone($json_config);
+$xcloner_backup = new Watchfulli\XClonerCore\Xcloner_Standalone($json_config);
 
 $xcloner_backup->start($profile['id']);
 

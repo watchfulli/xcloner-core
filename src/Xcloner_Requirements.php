@@ -1,5 +1,5 @@
 <?php
-namespace watchfulli\XClonerCore;
+namespace Watchfulli\XClonerCore;
 
 class Xcloner_Requirements {
 
@@ -70,7 +70,7 @@ class Xcloner_Requirements {
 			else
 				return true;
 		}
-		
+
 		if( ini_get('safe_mode') )
 			$safe_mode = "On";
 		* */

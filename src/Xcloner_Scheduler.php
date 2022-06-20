@@ -1,5 +1,5 @@
 <?php
-namespace watchfulli\XClonerCore;
+namespace Watchfulli\XClonerCore;
 
 class Xcloner_Scheduler
 {
@@ -52,7 +52,7 @@ class Xcloner_Scheduler
         if(!$list){
             return array();
         }
-        
+
         if ($return_only_enabled) {
             $new_list = array();
 
@@ -302,7 +302,7 @@ class Xcloner_Scheduler
         if (isset($schedule['backup_params']->diff_start_date) && $schedule['backup_params']->diff_start_date) {
             $this->xcloner_file_system->set_diff_timestamp_start($schedule['backup_params']->diff_start_date);
         }
-        
+
 
         if ($schedule['recurrence'] == "single") {
             $this->disable_single_cron($schedule['id']);
@@ -407,7 +407,7 @@ class Xcloner_Scheduler
                 }
             }
         }
-        
+
         $additional['backup_size'] = size_format($this->xcloner_file_system->get_backup_size($return['extra']['backup_parent']));
 
         //Sending backup to remote storage
@@ -415,7 +415,7 @@ class Xcloner_Scheduler
             $backup_file = $return['extra']['backup_parent'];
 
             $this->logger->print_info(sprintf("Transferring backup to remote storage %s", strtoupper($schedule['remote_storage'])), array("CRON"));
-            
+
             if (method_exists($this->xcloner_remote_storage, "upload_backup_to_storage")) {
                 call_user_func_array(array(
                     $this->xcloner_remote_storage,

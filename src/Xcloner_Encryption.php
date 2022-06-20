@@ -1,5 +1,5 @@
 <?php
-namespace watchfulli\XClonerCore;
+namespace Watchfulli\XClonerCore;
 
 /**
  * Created by PhpStorm.
@@ -383,15 +383,9 @@ class Xcloner_Encryption
 
 try {
     if (isset($argv[1])) {
-        class Xcloner
-        {
-            /**
-             * Xcloner constructor.
-             */
-            public function __construct()
-            {
-            }
-        }
+        //Include autoloader, so Xcloner is defined.
+        //SEE: https://github.com/watchfulli/xcloner-core/issues/3
+        require_once dirname(__FILE__, 2) . '/vendor/autoload.php';
         $xcloner_encryption = new Xcloner_Encryption(new Xcloner());
 
         if ($argv[1] == "-e") {
